@@ -32,10 +32,6 @@ public class AuthorizationController {
         //!return token.getAuthorities().toString();
     }
 
-    /*private Collection<GrantedAuthority> toString(Collection<GrantedAuthority> authorities) {
-
-    }*/
-
     @PostMapping(path = "/logout", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public Principal logout(Principal user, HttpServletRequest request, HttpServletResponse response) {
