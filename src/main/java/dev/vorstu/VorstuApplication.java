@@ -29,20 +29,8 @@ public class VorstuApplication {
 	}
 
 	public static void main(String[] args) {
-		/*List<Student> l = new ArrayList<Student>();
-		Collection<Student> c = new ArrayList<Student>();
-		Iterable<Student> i = new ArrayList<Student>();
-
-		checkSize(i);
-		checkSize(c);
-		checkSize(l);*/
-
 		SpringApplication.run(VorstuApplication.class, args);
 		initiator.initial();
-
-
-
-
 	}
 
 }
