@@ -1,6 +1,6 @@
-package dev.vorstu;
+package dev.check;
 
-import dev.vorstu.entity.Student;
+import dev.check.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,12 +8,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.*;
 
 @SpringBootApplication
-public class VorstuApplication {
+public class СheckApplication {
 	private static Initializer initiator;
 
 	@Autowired
 	public void setInitiatorLoader(Initializer initiator) {
-		VorstuApplication.initiator = initiator;
+		СheckApplication.initiator = initiator;
 	}
 
 	static void checkSize(Iterable<Student> i) {
@@ -29,7 +29,7 @@ public class VorstuApplication {
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(VorstuApplication.class, args);
+		SpringApplication.run(СheckApplication.class, args);
 		initiator.initial();
 	}
 
