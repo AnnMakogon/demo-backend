@@ -39,7 +39,6 @@ public class BaseController {
         return newStudents;
     }
 
-
     @PostMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
     public Student createStudent(@RequestBody Student newStudent) {
         return addStudent(newStudent);
