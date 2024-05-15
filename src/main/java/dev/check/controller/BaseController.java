@@ -3,6 +3,8 @@ package dev.check.controller;
 import dev.check.entity.Student;
 import dev.check.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+// org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,7 +12,7 @@ import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/api/base")
@@ -22,21 +24,32 @@ public class BaseController {
 
     private String filterWord;
 
-    private List<Student> data;
-
     @Autowired // внедрение зависимостей
     public StudentRepository studentRepository;
     private Number length;
 
-    public ArrayList<Student> getStudentsList() {
-        //pageable
-        Iterator<Student> iterator = studentRepository.findAll().iterator();
-        ArrayList<Student> newStudents = new ArrayList<Student>();
-        while (iterator.hasNext()) {
-            Student item = iterator.next();
-            newStudents.add(item);
-        }
-        return newStudents;
+    private Page<Student> studPage;
+
+    private List<Student> getStudentsFromSR(String substring, Pageable page){
+        return studentRepository.getStudents(substring, page);
+    }
+    //list = this.getStudentsFromSR("", PageRequest.of(page, size, sortColumn(column)));
+
+    private List<Student> getStudentsWithPage(String substring, int page, int size, Sort sort) {
+        Pageable pageable = PageRequest.of(page, size, sort);
+        this.studPage = studentRepository.findAll(PageRequest.of(page, size, sort));
+        //return this.getStudentsFromSR(substring, this.studPage);
+        return  this.getStudentsFromSR(substring, pageable);
+    }
+
+    private int getLengthStudents() {
+        return studentRepository.getLengthStudents();
+    }
+
+    public List<Student> getStudentsList() {
+        List<Student> list = StreamSupport.stream(studentRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
+        return list;
     }
 
     @PostMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -53,6 +66,7 @@ public class BaseController {
     public Student changeStudent(@RequestBody Student changingStudent) {
         return updateStudent(changingStudent);
     }
+
     @Transactional
     private Student updateStudent(Student student) {
         if(student.getId() == null){
@@ -83,54 +97,88 @@ public class BaseController {
         return id;
     }
 
-    @GetMapping("students")
-    public List<Student> getStudentsPagSortFilter(@RequestParam(name = "start") int start,
-                                        @RequestParam(name = "end") int end,
-                                        @RequestParam(name = "sort") String column,
-                                        @RequestParam(name = "filter") String filter) {
-        List<Student> students = new ArrayList<Student>();
-        students = getStudentsList(); //записывание в лист полностью
-        List<Student> filterStudents = new ArrayList<Student>();
-        List<Student> filterStudentsById = new ArrayList<Student>();
-
-        //ФИЛЬТР
-        if(Objects.equals(filter, "")){   //вначале или когда фильтр пустой
-            filterStudents = students;       //ничего с ним не делаем
-            filterStudentsById = filterStudents; //просто передаем дальше в filterStudentsById
-        }else{   //иначе, если мы по чем-то фильтруем
-         filterStudents = this.filterS(students, filter);  //делаем фильтрацию
-         filterStudentsById = sortById(filterStudents);    //делаем сортировку по id
+    private Sort sortOneColumn(String column){
+        callCount++;
+        if(!this.columnC.equals(column)) { //если до этого колонка была другая
+            callCount = 1;                 // начинаем отсчет
+            this.columnC = column;         //записываем нашу колонку
         }
+        switch (callCount % 3) {           // остаток от деления на 3
+            case 1:
+                return Sort.by(column).ascending(); // по убыванию
+            case 2:
+                return Sort.by(column).descending();  //по возрастанию
+            case 0:
+                return Sort.by("id");// никак  = по id
+        }
+        return Sort.by("id");
+    }
 
-        //СОРТ
-        List<Student> sortStudents = new ArrayList<Student>();
+    private Sort sortColumn(String column) {
         if(Objects.equals(column, "")){  //если нам нужно ни по чем не сортировать
-            sortStudents = filterStudentsById;  //просто берем отсортированный по id
-        }else{                                  //если по чем-то сортируем
-        sortStudents = sortS(filterStudentsById, column);  //делаем сортировку по колонам
+              return Sort.by("id");//просто берем отсортированный по id
+        }else{                                 //если по чем-то сортируем
+            if(Objects.equals(column, "nothing")){
+                return Sort.by(this.columnC);
+            }
+            return this.sortOneColumn(column);//делаем сортировку по колонам
         }
+    }
 
-        List<Student> subSortStudents = new ArrayList<Student>();
-        //ПАГИНАЦИЯ
-        if(Objects.equals(filter, "") ) {                 //если мы ни по чем не фильтруем, то идем до конца страницы
-            subSortStudents = sortStudents.subList(start, end); //обрезка для пагинации
-        }else{
-            if (sortStudents.size() < (end -(end - start))) {//если по чем-то фильтруем и список короче размера страницы, то идем до конца всего списка
-                subSortStudents = sortStudents.subList(start, sortStudents.size());
-            } else { //если мы по чем-то фильтруем и список больше страницы, то идем до конца страницы
-                subSortStudents = sortStudents.subList(start, end);
+    @Transactional
+    public List<Student> getPageSizeColumnFilter(int page, int size, String column, String filter) {
+        List<Student> list;
+        if (Objects.equals(column,"") && Objects.equals(filter,"") ) {               //если и сортировка и фильтр пусты - в самом начале
+            //list = this.getStudentsFromSR("", PageRequest.of(page, size));
+            list = getStudentsWithPage("", page, size, Sort.unsorted());
+            list.forEach(e -> System.out.println(e.getFio() + " " + e.getId()));
+            this.columnC = "";
+        } else {
+            if (Objects.equals(filter, "")) {                                        // если есть сортировка
+                //list = this.getStudentsFromSR("", PageRequest.of(page, size, sortColumn(column))); // здесть вставить свою сортировку
+                list = getStudentsWithPage("", page, size, sortColumn(column));
+                list.forEach(e -> System.out.println(e.getFio() + " " + e.getId()));
+            } else {
+                if (Objects.equals(column, "")) {                                    // если есть фильтр
+                    //list = this.getStudentsFromSR(filter, PageRequest.of(page, size));
+                    list = getStudentsWithPage(filter, page, size, Sort.unsorted());
+                    list.forEach(e -> System.out.println(e.getFio() + " " + e.getId()));
+                    this.columnC = "";
+                } else {
+                    if (Objects.equals(column, "nothing")){                       // особый случай
+                        //list = this.getStudentsFromSR("", PageRequest.of(page, size, sortColumn(column)));
+                        //list = this.getStudentsFromSR("", PageRequest.of(page, size, sortColumn(column)));
+                        list = getStudentsWithPage("", page, size, sortColumn(column));
+                        list = getStudentsWithPage("", page, size, sortColumn(column));
+                    }else {                                                        // если есть и сортировка и фильтр
+                        //list = this.getStudentsFromSR(filter, PageRequest.of(page, size, sortColumn(column))); //здесь свою сортировку
+                        list = getStudentsWithPage(filter, page, size, sortColumn(column));
+                        list.forEach(e -> System.out.println(e.getFio() + " " + e.getId()));
+                    }
+                }
             }
         }
+        return list;
+    }
 
-        this.data = sortStudents;
+    @GetMapping("students")
+    public List<Student> getStudentsPagSortFilter(@RequestParam(name = "page") int page,
+                                        @RequestParam(name = "size") int size,
+                                        @RequestParam(name = "sort") String column,
+                                        @RequestParam(name = "filter") String filter) {
 
-        this.length = sortStudents.size();
+        List<Student> students = getPageSizeColumnFilter(page, size, column, filter);
 
-        Stream<Student> newStudents = subSortStudents.stream();
-
-        return newStudents
-                //.sorted()
+        List<Student> stds = students.stream()
                 .collect(Collectors.toList());
+
+        return stds;
+    }
+
+    @GetMapping("fulllength")            //эту вещь можно сделать через SQL и StudentRepository
+    public Number getFullLength() {
+        return getLengthStudents();
+        //return this.studPage.getTotalElements();
     }
 
     public static List<Student> sortById(List<Student> students) {
@@ -195,26 +243,12 @@ public class BaseController {
         }
     }
 
-    @GetMapping("fulllength")
-    public Number getFullLength() {
-        List<Student> students = getStudentsList();
-        return students.toArray().length;
-    }
 
-    public Number getRealLength(){
-        if(!Objects.equals(this.getLength(), this.data.size())){
-            return this.data.size();
-        }
-        return getLength();
-    }
 
     @GetMapping("length")
     public Number getLength(){
         return this.length;
     }
-
-
-
 
     @GetMapping("check")
     public String greetJava() {

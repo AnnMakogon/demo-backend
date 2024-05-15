@@ -19,8 +19,8 @@ public class Initializer {
     private UserRepository userRepository;
 
     public void initial() {
-        for(long i = 0L; i < 100L; i ++) {
-            studentRepository.save(new Student(i,"fio" + i,"def_group","+89"));
+        for(long i = 0L; i <= 100L; i ++) {
+                studentRepository.save(new Student(i, "fio" + i, "def_group" + (i * 10), "+89" + (100 - i)));
         }
 
         Iterable<Student> itr = studentRepository.findAll();// возвращает Iterable данного типа
