@@ -28,7 +28,8 @@ public class Initializer {
             System.out.println(item);
         }
         System.out.println("");
-
+    }
+    public void initialUser() {
         User student = new User(
                 null,
                 "student",

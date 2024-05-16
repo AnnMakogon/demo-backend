@@ -31,6 +31,7 @@ public class СheckApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(СheckApplication.class, args);
 		initiator.initial();
+		initiator.initialUser();
 	}
 
 }
