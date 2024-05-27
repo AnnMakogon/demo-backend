@@ -7,6 +7,7 @@ import javax.persistence.*;
 @Getter
 @Table(name="Students")
 @Entity
+@SequenceGenerator(name = "student_seq", sequenceName = "student_seq", allocationSize = 1)
 public class Student {
 
     public String toString(){
@@ -26,7 +27,7 @@ public class Student {
     }
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "student_seq")
     private Long id;
     private String fio;
     @Column(name="group_of_students")

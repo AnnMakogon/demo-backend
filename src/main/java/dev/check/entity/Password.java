@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "passwords")
 @Getter @Setter
+@SequenceGenerator(name = "pas_seq", sequenceName = "pas_seq", allocationSize = 1)
 public class Password {
     static BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -18,7 +19,7 @@ public class Password {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pas_seq")
     private Long id;
 
     @Column(name="password")

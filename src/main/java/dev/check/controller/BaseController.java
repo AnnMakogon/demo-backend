@@ -1,5 +1,6 @@
 package dev.check.controller;
 
+import dev.check.CustomExceptionHandler1;
 import dev.check.entity.Student;
 import dev.check.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,29 +14,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
+@CustomExceptionHandler1
 @RequestMapping("/api/base")
 public class BaseController {
-
-    private int callCount = 0;
-    private String columnC = "id";
-    private String filterWord;
-    private Number length;
-
     @Autowired // внедрение зависимостей
     public StudentRepository studentRepository;
-
-    private List<Student> getStudentsFromSR(String substring, Pageable page){
-        return studentRepository.getStudents(substring, page);
-    }
-
-    private List<Student> getStudentsWithPage( int page, int size, Sort sort, String substring) {
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return  this.getStudentsFromSR(substring, pageable);
-    }
-
-    private int getLengthStudents() {
-        return studentRepository.getLengthStudents();
-    }
 
     public List<Student> getStudentsList() {
         List<Student> list = StreamSupport.stream(studentRepository.findAll().spliterator(), false)
@@ -73,7 +56,7 @@ public class BaseController {
         changingStudent.setFio(student.getFio());
         changingStudent.setGroup(student.getGroup());
         changingStudent.setPhoneNumber(student.getPhoneNumber());
-        studentRepository.save(changingStudent); // после этого меняется порядок data
+        studentRepository.save(changingStudent);
 
         return student;
     }
@@ -88,38 +71,35 @@ public class BaseController {
         return id;
     }
 
-    @Transactional
-    public List<Student> getPageSizeColumnFilter(int page, int size, String column, String direction, String filter) {   // ТУТ ПЕРЕДЕЛАТЬ ВСЕ С СОРТИРОВКОЙ
-        if(Objects.equals(column, "group")){
-            column = "group_of_students";
-        }
-        if(Objects.equals(column, "phoneNumber")){
-            column = "phone_number";
-        }
-        Sort sort;
-        if(Objects.equals(direction, "")) {
-            sort = Sort.by("id");
-        } else {
-            Sort.Direction direct = Sort.Direction.fromString(direction);
-            sort = Sort.by(direct, column);}
-        return getStudentsWithPage(page, size, sort, filter);
-    }
-
-    @GetMapping("students")
+    @GetMapping ("students")
     public List<Student> getStudentsPagSortFilter(@RequestParam(name = "page") int page,
                                         @RequestParam(name = "size") int size,
-                                        @RequestParam(name = "sort") String column,
-                                        @RequestParam(name = "direction") String direction,  //проверить
+                                        @RequestParam(name = "column") String column,
+                                        @RequestParam(name = "direction") String direction,
                                         @RequestParam(name = "filter") String filter) {
+        if(Objects.equals(column, "group")){         //переопределение колонок для корректного запроса в бд
+            column = "group_of_students";
+        }
+        if(Objects.equals(column, "phoneNumber")){  //переопределение колонок для корректного запроса в бд
+            column = "phone_number";
+        }
 
-        List<Student> students = getPageSizeColumnFilter(page, size, column, direction, filter);
+        Sort sort = Objects.equals(direction, "") ? Sort.by("fio") : Sort.by(Sort.Direction.fromString(direction), column);//если не указано направление, то сортируем по fio
+                                                                                                            //если есть направление - делаем из него и солоны - Sort
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        List<Student> students = studentRepository.getStudents(filter, pageable);
 
         List<Student> stds = students.stream()
                 .collect(Collectors.toList());
         return stds;
     }
 
-    @GetMapping("fulllength")
+    private int getLengthStudents() {
+        return studentRepository.getLengthStudents();
+    }
+
+    @GetMapping("length")
     public Number getFullLength() {
         return getLengthStudents();
     }
