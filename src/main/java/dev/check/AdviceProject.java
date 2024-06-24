@@ -1,6 +1,5 @@
 package dev.check;
 
-import dev.check.entity.Student;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 @Slf4j
-@ControllerAdvice(annotations = CustomExceptionHandler1.class)
+@ControllerAdvice(annotations = FindError500.class)
 public class AdviceProject {
 
     @ExceptionHandler(NoSuchElementException.class)

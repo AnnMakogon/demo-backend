@@ -8,30 +8,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.*;
 
 @SpringBootApplication
-public class СheckApplication {
+public class CheckApplication {
 	private static Initializer initiator;
 
 	@Autowired
 	public void setInitiatorLoader(Initializer initiator) {
-		СheckApplication.initiator = initiator;
-	}
-
-	static void checkSize(Iterable<Student> i) {
-		long count = 0;
-		for (Student iter : i){
-		System.out.println(iter);
-		count ++;
-		}
-		System.out.println(count);
-	}
-	static void checkSize(Collection<Student> c) {
-		System.out.println(c.size());
+		CheckApplication.initiator = initiator;
 	}
 
 	public static void main(String[] args) {
-		SpringApplication.run(СheckApplication.class, args);
+		SpringApplication.run(CheckApplication.class, args);
 		initiator.initial();
-		initiator.initialUser();
+		//initiator.initialUser();
 	}
 
 }

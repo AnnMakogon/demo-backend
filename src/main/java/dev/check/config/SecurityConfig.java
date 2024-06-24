@@ -4,6 +4,7 @@ import dev.check.entity.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,9 +29,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
                     .antMatchers("/api/login/**").permitAll()
-
+                    .antMatchers("/api/base/registration/**").permitAll()
                     //For STUDENT
-                    .antMatchers("/api/base/students/**").hasAuthority(Role.STUDENT.name())
+                    .antMatchers("/api/base/students/**").hasAnyAuthority(Role.STUDENT.name(), Role.ADMIN.name())
 
                     .anyRequest()
                     .authenticated()

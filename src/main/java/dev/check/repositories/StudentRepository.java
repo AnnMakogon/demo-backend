@@ -15,14 +15,18 @@ import java.util.List;
 
 @Repository
 public interface StudentRepository extends CrudRepository<Student, Long>, PagingAndSortingRepository<Student, Long> {
-    /*@Modifying
-    @Transactional*/
     @Query(nativeQuery = true, value =  " SELECT * " +
                                         " FROM students " +
                                         " WHERE CAST(id AS TEXT) LIKE %:substring% OR fio LIKE %:substring% OR " +
                                         " group_of_students LIKE %:substring% OR phone_number LIKE %:substring%")
-    List<Student> getStudents (@Param("substring") String substring, Pageable page);
-    //List<Student> getStudents (@Param("substring") String substring, Page<Student> page);
+    List<Student> getStudentsAdmin (@Param("substring") String substring, Pageable page);  // это запрос на полные данные
+
+    @Query(nativeQuery = true, value = "SELECT id, fio, group_of_students, " +
+            "CASE WHEN fio = :userName THEN phone_number ELSE ' ' END as phone_number " +
+            "FROM students " +
+            "WHERE CAST(id AS TEXT) LIKE %:substring% OR fio LIKE %:substring% OR " +
+            "group_of_students LIKE %:substring% OR phone_number LIKE %:substring%")
+    List<Student> getStudentsStudent(@Param("substring") String substring, Pageable page, @Param("userName") String userName);
 
     @Query(nativeQuery = true, value = " SELECT COUNT(*) FROM students ")
     int getLengthStudents ();

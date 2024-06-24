@@ -26,6 +26,11 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok:1.18.8'
 
 	compileOnly ('org.postgresql:postgresql')
+
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+	implementation group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.1.0'
+
 }
 
 tasks.named('test') {

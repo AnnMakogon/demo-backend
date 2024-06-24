@@ -9,8 +9,6 @@ import dev.check.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 @Component
 public class Initializer {
 
@@ -26,13 +24,12 @@ public class Initializer {
                 studentRepository.save(new Student(i, FIO [(int) i], (i * 10) + " def_group" , "+89" + (100 - i)));
         }
 
-        Iterable<Student> itr = studentRepository.findAll();// возвращает Iterable данного типа
+        Iterable<Student> itr = studentRepository.findAll();
         for (Student item : itr) {
             System.out.println(item);
         }
         System.out.println("");
-    }
-    public void initialUser() {
+
         User student = new User(
                 null,
                 "student",
@@ -41,10 +38,18 @@ public class Initializer {
                 true
         );
         userRepository.save(student);
+        User admin = new User(
+                null,
+                "Admin",
+                Role.ADMIN,
+                new Password("1234"),
+                true
+        );
+        userRepository.save(admin);
     }
 
     public static final String[] FIO = {
-            "Иванов Алексей Сергеевич", "Петров Иван Николаевич", "Сидорова Мария Ивановна",
+            "Алла Борисовна","student", "Admin", "Петров Иван Николаевич", "Сидорова Мария Ивановна",
             "Кузнецова София Леонидовна", "Попова Екатерина Дмитриевна", "Васильев Дмитрий Петрович",
             "Соколов Максим Игоревич", "Михайлова Анна Васильевна", "Федорова Алина Максимовна",
             "Морозов Никита Сергеевич", "Волкова Ольга Николаевна", "Алексеева Наталья Дмитриевна",
