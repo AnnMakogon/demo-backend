@@ -57,7 +57,7 @@ public class StudentService {
                 .collect(Collectors.toList());
         return list;
     }
-    public StudentRegistrDTO addStudent(StudentRegistrDTO studentDtoAuth) {
+    /*public StudentRegistrDTO addStudent(StudentRegistrDTO studentDtoAuth) {
         if(studentDtoAuth.getRole() == ""){
             studentDtoAuth.setRole("STUDENT");
         }
@@ -66,7 +66,7 @@ public class StudentService {
         userRepository.save(user);
         studentRepository.save(student);
         return studentDtoAuth;
-    }
+    }*/
 
     public StudentUpdateDTO updateStudent(StudentUpdateDTO studentDto) {
         if(studentDto.getId() == null){
@@ -129,13 +129,13 @@ public class StudentService {
         return id;
     }
 
-    public List<StudentFullTableDTO> getStudents(String filter, Pageable pageable, String userName, String userRole ) {
+    public List<StudentFullTableDTO> getStudents(String substring, Pageable pageable, String userName, String userRole ) {
 
         List<Student> students = new ArrayList<>();
         if(Objects.equals(userRole, "[STUDENT]")){
-            students = studentRepository.getStudentsStudent(filter, pageable, userName);
+            students = studentRepository.getStudentsStudent(substring, pageable, userName); //без телефонов остальных
         } else {
-            students = studentRepository.getStudentsAdmin(filter, pageable);
+            students = studentRepository.getStudentsAdmin(substring, pageable); //полностью со всеми данными
         }
         List<StudentFullTableDTO> studentsDto = studentDtoMapper.studentListToStudentDtoFullList(students);
 

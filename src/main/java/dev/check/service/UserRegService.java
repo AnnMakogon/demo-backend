@@ -1,6 +1,8 @@
 package dev.check.service;
 
 import dev.check.DTO.StudentRegistrDTO;
+import dev.check.controller.AuthorizationController;
+import dev.check.controller.RegistrationController;
 import dev.check.entity.Password;
 import dev.check.entity.Student;
 import dev.check.entity.User;
@@ -24,19 +26,23 @@ public class UserRegService {
     private StudentRepository studentRepository;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private EmailService emailService;
 
-    public StudentRegistrDTO regStudent(StudentRegistrDTO studentDtoAuth) {
-        if(Objects.equals(studentDtoAuth.getRole(), "")){
-            studentDtoAuth.setRole("STUDENT");
+    public StudentRegistrDTO regStudent(StudentRegistrDTO studentRegistr) {
+        if(Objects.equals(studentRegistr.getRole(), "")){
+            studentRegistr.setRole("STUDENT");
         }
-        Student student = studentDtoMapper.studentDtoAuthToStudent(studentDtoAuth);
-        User user = new User(studentDtoAuth.getFio(),
-                            userMapper.stringToRole(studentDtoAuth.getRole()),
-                            new Password(studentDtoAuth.getPassword_id()),
-                            studentDtoAuth.isEnable());
+        Student student = studentDtoMapper.studentDtoAuthToStudent(studentRegistr);
+        User user = new User(studentRegistr.getFio(),
+                userMapper.stringToRole(studentRegistr.getRole()),
+                new Password(studentRegistr.getPassword_id()),
+                studentRegistr.isEnable(), studentRegistr.getEmail());
         userRepository.save(user);
         studentRepository.save(student);
-        return studentDtoAuth;
+        System.out.println("REEEEEEEEEEEEEEG UserRegService");
+
+        return studentRegistr;
     }
 
 

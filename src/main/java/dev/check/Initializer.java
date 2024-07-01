@@ -1,13 +1,17 @@
 package dev.check;
 
-import dev.check.entity.Password;
-import dev.check.entity.Role;
-import dev.check.entity.Student;
-import dev.check.entity.User;
+import dev.check.DTO.NewsletterDTO;
+import dev.check.entity.*;
+import dev.check.repositories.NewsletterRepository;
 import dev.check.repositories.StudentRepository;
 import dev.check.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 @Component
 public class Initializer {
@@ -17,6 +21,9 @@ public class Initializer {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private NewsletterRepository nlRepository;
 
 
     public void initial() {
@@ -35,7 +42,8 @@ public class Initializer {
                 "student",
                 Role.STUDENT,
                 new Password("1234"),
-                true
+                true,
+                "makogon.anna11.10@gmail.com"
         );
         userRepository.save(student);
         User admin = new User(
@@ -43,9 +51,38 @@ public class Initializer {
                 "Admin",
                 Role.ADMIN,
                 new Password("1234"),
-                true
+                true,
+                "makogon.anna11.10@gmail.com"
         );
         userRepository.save(admin);
+
+        Newsletter nl1 = new Newsletter(
+                null,
+                "27.06.2024 16:48",
+                "myworkemail033@mail.ru",
+                "Proverka1",
+                "subject proverki1",
+                false,
+                true
+        );
+        nlRepository.save(nl1);
+
+        List<String> dates = new ArrayList<String>();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        Calendar calendar = Calendar.getInstance();
+
+        for (int i = 0; i <= 100; i++) {
+            dates.add(dateFormat.format(calendar.getTime()));
+            calendar.add(Calendar.MINUTE, 1);
+        }
+
+        for(long i = 0L; i <= 100; i += 2) {
+            nlRepository.save(new Newsletter(null, dates.get((int) i), "myworkemail033@mail.ru", "Proverka"+i, "Proverka subject"+i, true, true));
+        }
+
+        for(long i = 1L; i <= 99; i += 2) {
+            nlRepository.save(new Newsletter(null, dates.get((int) i), "myworkemail033@mail.ru", "Proverka"+i, "Proverka subject"+i, false, false));
+        }
     }
 
     public static final String[] FIO = {

@@ -17,20 +17,21 @@ import java.util.List;
 @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
 public class User {
 
-    public User(String username, Role role, Password password, boolean enable){
+    public User(String username, Role role, Password password, boolean enable, String email){
         this.username = username;
         this.role = role;
         this.password = password;
         this.enable = enable;
+        this.email = email;
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
     @Column(name = "password_id")
     private Long id;
-    @Getter
+
     private String username;
-    @Getter
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -40,4 +41,5 @@ public class User {
 
     private boolean enable;
 
+    private String email;
 }

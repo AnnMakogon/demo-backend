@@ -18,5 +18,6 @@ public class StudentRegistrDTO {
     private String password_id;
     private String role;
     private boolean enable;
+    private String email;
 
 }

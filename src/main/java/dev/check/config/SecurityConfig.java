@@ -28,9 +28,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                    .antMatchers("/api/login/**").permitAll()
-                    .antMatchers("/api/base/registration/**").permitAll()
-                    //For STUDENT
+                    .antMatchers( "/api/login/**", "/api/base/registration/**",
+                                "/api/base/proof/**", "/api/registr/**", "/api/mail/newsletter/**").permitAll()
+                    //For newsletter
+                    //.antMatchers("/api/mail/newsletter/**").hasAuthority(Role.ADMIN.name())
+                    //For STUDENT (table)
                     .antMatchers("/api/base/students/**").hasAnyAuthority(Role.STUDENT.name(), Role.ADMIN.name())
 
                     .anyRequest()

@@ -13,6 +13,10 @@ java {
 
 repositories {
 	mavenCentral()
+	maven {
+		url 'http://repository.aspose.com/repo/'
+		allowInsecureProtocol = true
+	}
 }
 
 dependencies {
@@ -30,6 +34,14 @@ dependencies {
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
 	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 	implementation group: 'org.projectlombok', name: 'lombok-mapstruct-binding', version: '0.1.0'
+
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.7.18'
+	implementation 'com.aspose:aspose-email:21.3:jdk16'
+	implementation (
+			group: 'com.aspose',
+			name: 'aspose-words',
+			version: '21.3',
+			classifier: 'jdk17')
 
 }
 

@@ -28,6 +28,8 @@ public interface StudentRepository extends CrudRepository<Student, Long>, Paging
             "group_of_students LIKE %:substring% OR phone_number LIKE %:substring%")
     List<Student> getStudentsStudent(@Param("substring") String substring, Pageable page, @Param("userName") String userName);
 
-    @Query(nativeQuery = true, value = " SELECT COUNT(*) FROM students ")
-    int getLengthStudents ();
+    @Query(nativeQuery = true, value = " SELECT COUNT(*) FROM students "  +
+            " WHERE CAST(id AS TEXT) LIKE %:substring% OR fio LIKE %:substring% OR " +
+            " group_of_students LIKE %:substring% OR phone_number LIKE %:substring%")
+    int getLengthStudents (@Param("substring") String substring);
 }

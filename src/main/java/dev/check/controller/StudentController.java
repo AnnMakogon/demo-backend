@@ -23,7 +23,6 @@ import java.util.*;
 @RestController
 @FindError500
 @RequestMapping("/api/base")
-@Controller
 public class StudentController {
 
     @Autowired
@@ -68,8 +67,8 @@ public class StudentController {
     }
 
     @GetMapping("length")
-    public Number getFullLength() {
-        return studentRepository.getLengthStudents();
+    public Number getFullLength(@RequestParam(name = "filter") String filter) {
+        return studentRepository.getLengthStudents(filter);
     }
 
     @GetMapping("check")

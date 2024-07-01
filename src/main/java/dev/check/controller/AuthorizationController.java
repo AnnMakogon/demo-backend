@@ -3,6 +3,7 @@ package dev.check.controller;
 import dev.check.DTO.UserDto;
 import dev.check.IAuthenticationFacade;
 import dev.check.entity.Role;
+import dev.check.service.EmailService;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,11 @@ public class AuthorizationController {
     @Autowired
     private IAuthenticationFacade authenticationFacade;
 
+    //@Autowired private EmailService emailService;
+
+    @Getter
+    public Boolean proof;
+
     @PostMapping(value = "/login")
     public void apiLogin(Principal user) {         // todo почитать про собственные токены
         log.info("Login user");
@@ -47,11 +53,7 @@ public class AuthorizationController {
         );
         SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
         cookieClearingLogoutHandler.logout(request, response, null);
-        securityContextLogoutHandler.logout(request, response, null);   //todo переделать, чтоб если не залогиненное 401
-                                                                                    // - переправлял на логин и смотреть откуда идут запросы,
-                                                                                    //   т.е. не делать запросы до того, как пройдет аутентификацию,
-                                                                                    //   почитать, про куки на java как их обновлять
-
+        securityContextLogoutHandler.logout(request, response, null);
         return user;
     }
 
