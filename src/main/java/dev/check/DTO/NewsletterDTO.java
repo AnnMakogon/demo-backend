@@ -15,12 +15,12 @@ import javax.persistence.Id;
 @Setter
 public class NewsletterDTO { //то что приходит из фронта
 
-    private Long id;             //id
+    private Long id;             // id
     private String date;         // дата
-    private String address;        // получатель
+    //private String address;      // получатель
     private String text;         // текст письма
     private String subject;      // тема письма
-    private String mess;        // отправлено или нет
-    private String status;      // статус(в очереди/дошло/не дошло)
+    private String mess;         // отправлено или нет
+    private String status;       // статус(дошло/не дошло)
 
 }

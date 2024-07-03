@@ -19,12 +19,12 @@ public class Newsletter {
 
     @Id
     @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "newsletter_seq")
-    private Long id;             //id
+    private Long id;             // id
     private String date;         // дата
-    private String address;      // получатель
+    //private String address;      // получатель
     private String text;         // текст письма
     private String subject;      // тема письма
     private Boolean mess;        // отправлено или нет
-    private Boolean status;      // статус(дошло/не дошло)
+    private Boolean status;      // статус(дошло/не дошло в случае ошибки)
 
 }

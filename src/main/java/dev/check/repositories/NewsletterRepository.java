@@ -16,17 +16,17 @@ public interface NewsletterRepository extends CrudRepository<Newsletter, Long>, 
     @Query(nativeQuery = true, value = " SELECT * " +
             " FROM newsletter " +
             " WHERE CAST(id AS TEXT) LIKE %:substring% OR text LIKE %:substring% OR " +
-            " subject LIKE %:substring% OR address LIKE %:substring% OR date LIKE %:substring%" )
+            " subject LIKE %:substring% OR date LIKE %:substring%" )
     List<Newsletter> getNewsletter (@Param("substring") String substring, Pageable page);
 
     @Query(nativeQuery = true, value = " SELECT * " +
             " FROM newsletter " +
             " WHERE (CAST(id AS TEXT) LIKE %:substring% OR text LIKE %:substring% OR " +
-            " subject LIKE %:substring% OR address LIKE %:substring% OR date LIKE %:substring%) AND mess = false" )
+            " subject LIKE %:substring% OR date LIKE %:substring%) AND mess = false" )
     List<Newsletter> getUnreadNl (@Param("substring") String substring, Pageable page);
 
     @Query(nativeQuery = true, value = " SELECT COUNT(*) FROM newsletter " +
             " WHERE CAST(id AS TEXT) LIKE %:substring% OR text LIKE %:substring% OR " +
-            " subject LIKE %:substring% OR address LIKE %:substring% OR date LIKE %:substring%" )
+            " subject LIKE %:substring% OR date LIKE %:substring%" )
     int getLengthStudents (@Param("substring") String substring);
 }

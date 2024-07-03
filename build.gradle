@@ -42,7 +42,10 @@ dependencies {
 			name: 'aspose-words',
 			version: '21.3',
 			classifier: 'jdk17')
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-websocket', version: '2.7.18'
+	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
 
+	implementation group: 'com.cronutils', name: 'cron-utils', version: '9.2.1'
 }
 
 tasks.named('test') {

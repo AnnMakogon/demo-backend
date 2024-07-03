@@ -8,6 +8,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +25,12 @@ public class EmailController {
     private EmailService emailService;
 
     // создание и отправка
+    @MessageMapping("/newsletter")
+    @SendTo("/topic/messNl")
     @PostMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)  //отправка
     public NewsletterDTO messNewsletter(@RequestBody NewsletterDTO nl) {
-        emailService.messNewsletter(nl);
+        //emailService.setDateNl(nl);     // здесь сначала получение nl
+        emailService.messNewsletter(nl);                         //потом здесь отправка через шедуйлер
         return nl;
     }
 

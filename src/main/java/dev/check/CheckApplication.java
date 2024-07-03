@@ -3,11 +3,13 @@ package dev.check;
 import dev.check.entity.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.*;
 
 @SpringBootApplication
+@EnableAutoConfiguration
 public class CheckApplication {
 	private static Initializer initiator;
 

@@ -43,7 +43,7 @@ public class Initializer {
                 Role.STUDENT,
                 new Password("1234"),
                 true,
-                "makogon.anna11.10@gmail.com"
+                "myworkemail033@mail.ru"
         );
         userRepository.save(student);
         User admin = new User(
@@ -52,14 +52,14 @@ public class Initializer {
                 Role.ADMIN,
                 new Password("1234"),
                 true,
-                "makogon.anna11.10@gmail.com"
+                "myworkemail033@mail.ru"
         );
         userRepository.save(admin);
 
         Newsletter nl1 = new Newsletter(
                 null,
                 "27.06.2024 16:48",
-                "myworkemail033@mail.ru",
+                //"myworkemail033@mail.ru",
                 "Proverka1",
                 "subject proverki1",
                 false,
@@ -77,11 +77,11 @@ public class Initializer {
         }
 
         for(long i = 0L; i <= 100; i += 2) {
-            nlRepository.save(new Newsletter(null, dates.get((int) i), "myworkemail033@mail.ru", "Proverka"+i, "Proverka subject"+i, true, true));
+            nlRepository.save(new Newsletter(null, dates.get((int) i), "Proverka"+i, "Proverka subject"+i, true, true));
         }
 
         for(long i = 1L; i <= 99; i += 2) {
-            nlRepository.save(new Newsletter(null, dates.get((int) i), "myworkemail033@mail.ru", "Proverka"+i, "Proverka subject"+i, false, false));
+            nlRepository.save(new Newsletter(null, dates.get((int) i), "Proverka"+i, "Proverka subject"+i, false, false));
         }
     }
 
