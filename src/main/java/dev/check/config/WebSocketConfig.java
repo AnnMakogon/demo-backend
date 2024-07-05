@@ -14,7 +14,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry){
-        registry.addEndpoint("/newsletter").setAllowedOrigins("*");
+        registry.addEndpoint("/gs-guide-websocket/").setAllowedOrigins("http://localhost:4200");
     }
 
     @Override
@@ -23,12 +23,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/app");
     }
 
-    public WebMvcConfigurer corsConfigurer() {
+   /* public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**").allowedOrigins("*");
             }
         };
-    }
+    }*/
 }

@@ -46,6 +46,8 @@ dependencies {
 	implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.15.2'
 
 	implementation group: 'com.cronutils', name: 'cron-utils', version: '9.2.1'
+	implementation 'org.springframework.security:spring-security-messaging'
+
 }
 
 tasks.named('test') {

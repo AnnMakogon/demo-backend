@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -18,20 +19,20 @@ import java.util.Objects;
 
 @RestController
 @FindError500
-@RequestMapping("/api/mail")
+@RequestMapping("/api/mail")  //не влияет на webSocket
 public class EmailController {
 
     @Autowired
     private EmailService emailService;
 
     // создание и отправка
-    @MessageMapping("/newsletter")
-    @SendTo("/topic/messNl")
-    @PostMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)  //отправка
-    public NewsletterDTO messNewsletter(@RequestBody NewsletterDTO nl) {
-        //emailService.setDateNl(nl);     // здесь сначала получение nl
-        emailService.messNewsletter(nl);                         //потом здесь отправка через шедуйлер
-        return nl;
+    @MessageMapping("/hello")
+    @SendTo("/topic/greetings")
+    //@PostMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)  //отправка
+    public NewsletterDTO messNewsletter(@Payload NewsletterDTO nl) {    // сюда оно не доходит без HttpClient через WebSocket
+        emailService.messNewsletter(nl);
+        System.out.println("BEBE");
+        return nl; //todo передать обратно либо новую дто либо просто тру, но лучше новую
     }
 
     @PutMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -30,7 +30,7 @@ public class SecurityConfig {
         http.authorizeRequests()
                     .antMatchers( "/api/login/**", "/api/base/registration/**",
                                 "/api/base/proof/**", "/api/registr/**", "/api/mail/newsletter/**",
-                                "**/newsletter/**", "/ws/**").permitAll()
+                                "**/newsletter/**", "/ws/**", "/gs-guide-websocket/**").permitAll()
                     //For newsletter
                     //.antMatchers("/api/mail/newsletter/**").hasAuthority(Role.ADMIN.name())
                     //For STUDENT (table)

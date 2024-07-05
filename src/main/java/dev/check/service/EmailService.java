@@ -178,7 +178,7 @@ public class EmailService {
     public void messNewsletter(NewsletterDTO nl){
         Logger logger = LoggerFactory.getLogger(EmailService.class);
         Newsletter newsletter = nlMapper.newsletterDTOTonewsletter(nl);  //для установки статуса
-        nlRepository.save(newsletter);  //первичная запись в бд сос статусом "в очереди"
+        nlRepository.save(newsletter);  //первичная запись в бд со статусом "в очереди"
 
         String dateString = nl.getDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"); //создается формат
@@ -218,7 +218,6 @@ public class EmailService {
                 }, java.util.Date.from(dateTime.atZone(java.time.ZoneId.systemDefault()).toInstant()));
             }
         }
-        //todo сделать через какое-то время перезаписать mess, когда отправляется
     }
 
     /*public void messNewsletter(NewsletterDTO nl){

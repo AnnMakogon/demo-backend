@@ -43,7 +43,7 @@ public class Initializer {
                 Role.STUDENT,
                 new Password("1234"),
                 true,
-                "myworkemail033@mail.ru"
+                "myworkemail03@mail.ru"
         );
         userRepository.save(student);
         User admin = new User(
@@ -52,7 +52,7 @@ public class Initializer {
                 Role.ADMIN,
                 new Password("1234"),
                 true,
-                "myworkemail033@mail.ru"
+                "myworkemail03@mail.ru"
         );
         userRepository.save(admin);
 
