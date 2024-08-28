@@ -1,69 +1,60 @@
 package dev.check.controller;
 
-import dev.check.DTO.NewsletterDTO;
+import dev.check.DTO.Newsletter;
+import dev.check.DTO.ParamForGet;
 import dev.check.FindError500;
-import dev.check.service.EmailService;
+import dev.check.controller.errorhandler.NewsletterNullError;
+import dev.check.service.NewsletterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Objects;
+import javax.mail.MessagingException;
 
 @RestController
 @FindError500
+@Slf4j
 @RequestMapping("/api/mail")  //не влияет на webSocket
 public class EmailController {
 
     @Autowired
-    private EmailService emailService;
+    private NewsletterService emailService;
 
-    // создание и отправка
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    //@PostMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)  //отправка
-    public NewsletterDTO messNewsletter(@Payload NewsletterDTO nl) {    // сюда оно не доходит без HttpClient через WebSocket
-        emailService.messNewsletter(nl);
-        System.out.println("BEBE");
-        return nl; //todo передать обратно либо новую дто либо просто тру, но лучше новую
+    // создание
+    @PostMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> messNewsletter(@RequestBody Newsletter nl) throws NewsletterNullError {
+        log.info("Received newsletter: " + nl);
+        if (nl.getDate() == null || nl.getText() == null) {
+            throw new NewsletterNullError();
+        }
+        emailService.createNewsletter(nl);
+        return ResponseEntity.ok().build();
     }
 
-    @PutMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public NewsletterDTO changeNl(@RequestBody NewsletterDTO changingNl){
+    //изменить все
+    @PutMapping(value = "newsletter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Newsletter changeNl(@RequestBody Newsletter changingNl) {
+        log.info("Received newsletter: " + changingNl);
         return emailService.update(changingNl);
     }
+
+    //изменить только дату
     @PutMapping(value = "newsletterDate", produces = MediaType.APPLICATION_JSON_VALUE)
-    public NewsletterDTO changeDateNl(@RequestBody NewsletterDTO changingNlId){
-        return emailService.dataUpdate(changingNlId);
+    public Newsletter changeDateNl(@RequestBody Newsletter changingNlId) {
+        return emailService.dateUpdate(changingNlId);
     }
 
     @DeleteMapping(value = "newsletter/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Long deleteNl(@PathVariable("id") Long id){
+    public Long deleteNl(@PathVariable("id") Long id) {
         return emailService.deleteNl(id);
     }
 
     @GetMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<NewsletterDTO> getNlPagSortFilter(@RequestParam(name = "page") int page,
-                                                  @RequestParam(name = "size") int size,
-                                                  @RequestParam(name = "column") String column,
-                                                  @RequestParam(name = "direction") String direction,
-                                                  @RequestParam(name = "filter") String filter,
-                                                  @RequestParam(name = "showflag") boolean showflag) {
-        Sort sort = Objects.equals(direction, "") ? Sort.by("date") : Sort.by(Sort.Direction.fromString(direction), column);//если не указано направление, то сортируем по fio
-        Pageable pageable = PageRequest.of(page, size, sort);
-        return emailService.getNl(filter, pageable, showflag);
-    }
-
-    @GetMapping("length")
-    public Number getFullLength(@RequestParam(name = "filter") String filter) {
-        return emailService.getLengthStudents(filter);
+    public Page<Newsletter> getNlPagSortFilter(@ModelAttribute ParamForGet request) {
+        return emailService.getNl(request.getFilter(), ControllerUtils.createPageable(request.getPage(), request.getSize(), request.getColumn(), request.getDirection()), request.isShowFlag());
     }
 
 }

@@ -1,27 +1,30 @@
 package dev.check;
 
-import dev.check.entity.Student;
+import dev.check.manager.SentManager;
+import dev.check.service.InitializerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.*;
+import javax.mail.MessagingException;
 
 @SpringBootApplication
-@EnableAutoConfiguration
-public class CheckApplication {
-	private static Initializer initiator;
+@EnableTransactionManagement
+public class CheckApplication  { //вызывает метод run для всех бинов
+    @Autowired
+    private static InitializerService initiator;
 
-	@Autowired
-	public void setInitiatorLoader(Initializer initiator) {
-		CheckApplication.initiator = initiator;
-	}
+    @Autowired
+    public void setInitiatorLoader(InitializerService initiator) {
+        CheckApplication.initiator = initiator;
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(CheckApplication.class, args);
-		initiator.initial();
-		//initiator.initialUser();
-	}
-
+    public static void main(String[] args) throws MessagingException {
+        ApplicationContext context = SpringApplication.run(CheckApplication.class, args);
+        initiator.initial();
+        SentManager sentManager = context.getBean(SentManager.class);
+        sentManager.schedulerSent();//todo ЗАКОMМЕНТИЛА ЧТОБЫ НЕ ОТПРАВЛЯЛО
+    }
 }

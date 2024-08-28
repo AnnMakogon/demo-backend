@@ -1,10 +1,10 @@
 package dev.check.mapper;
 
-import dev.check.DTO.StudentFullTableDTO;
-import dev.check.DTO.StudentRegistrDTO;
-import dev.check.DTO.StudentTableDTO;
-import dev.check.DTO.StudentUpdateDTO;
-import dev.check.entity.Student;
+import dev.check.DTO.StudentFullTable;
+import dev.check.DTO.StudentRegistr;
+import dev.check.DTO.StudentUpdate;
+import dev.check.entity.EnumEntity.DepartmentName;
+import dev.check.entity.StudentEntity;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Generated;
@@ -12,142 +12,93 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-07-05T12:54:06+0300",
+    date = "2024-08-28T12:41:48+0300",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.6.jar, environment: Java 1.8.0_382 (Amazon.com Inc.)"
 )
 @Component
 public class StudentMapperImpl implements StudentMapper {
 
     @Override
-    public StudentTableDTO studentToStudentDto(Student student) {
-        if ( student == null ) {
-            return null;
-        }
-
-        StudentTableDTO studentTableDTO = new StudentTableDTO();
-
-        studentTableDTO.setId( student.getId() );
-        studentTableDTO.setFio( student.getFio() );
-        studentTableDTO.setGroup( student.getGroup() );
-
-        return studentTableDTO;
-    }
-
-    @Override
-    public List<StudentTableDTO> studentListToStudentDtoList(List<Student> students) {
-        if ( students == null ) {
-            return null;
-        }
-
-        List<StudentTableDTO> list = new ArrayList<StudentTableDTO>( students.size() );
-        for ( Student student : students ) {
-            list.add( studentToStudentDto( student ) );
-        }
-
-        return list;
-    }
-
-    @Override
-    public Student studentDtoToStudent(StudentUpdateDTO studentDtoUpd) {
+    public StudentEntity studentDtoToStudent(StudentUpdate studentDtoUpd) {
         if ( studentDtoUpd == null ) {
             return null;
         }
 
-        Student student = new Student();
+        StudentEntity studentEntity = new StudentEntity();
 
-        student.setId( studentDtoUpd.getId() );
-        student.setFio( studentDtoUpd.getFio() );
-        student.setGroup( studentDtoUpd.getGroup() );
-        student.setPhoneNumber( studentDtoUpd.getPhoneNumber() );
+        studentEntity.setId( studentDtoUpd.getId() );
+        studentEntity.setFio( studentDtoUpd.getFio() );
+        if ( studentDtoUpd.getGroup() != null ) {
+            studentEntity.setGroup( Float.parseFloat( studentDtoUpd.getGroup() ) );
+        }
+        studentEntity.setPhoneNumber( studentDtoUpd.getPhoneNumber() );
+        if ( studentDtoUpd.getCourse() != null ) {
+            studentEntity.setCourse( Integer.parseInt( studentDtoUpd.getCourse() ) );
+        }
+        if ( studentDtoUpd.getDepartmentName() != null ) {
+            studentEntity.setDepartmentName( Enum.valueOf( DepartmentName.class, studentDtoUpd.getDepartmentName() ) );
+        }
 
-        return student;
+        return studentEntity;
     }
 
     @Override
-    public List<Student> studentDtoListToStudentList(List<StudentTableDTO> students) {
-        if ( students == null ) {
+    public StudentEntity studentDtoRegistrToStudent(StudentRegistr studentDtoRegis) {
+        if ( studentDtoRegis == null ) {
             return null;
         }
 
-        List<Student> list = new ArrayList<Student>( students.size() );
-        for ( StudentTableDTO studentTableDTO : students ) {
-            list.add( studentTableDTOToStudent( studentTableDTO ) );
+        StudentEntity studentEntity = new StudentEntity();
+
+        studentEntity.setId( studentDtoRegis.getId() );
+        studentEntity.setFio( studentDtoRegis.getFio() );
+        if ( studentDtoRegis.getGroup() != null ) {
+            studentEntity.setGroup( Float.parseFloat( studentDtoRegis.getGroup() ) );
+        }
+        studentEntity.setPhoneNumber( studentDtoRegis.getPhoneNumber() );
+        if ( studentDtoRegis.getCourse() != null ) {
+            studentEntity.setCourse( Integer.parseInt( studentDtoRegis.getCourse() ) );
+        }
+        if ( studentDtoRegis.getDepartmentName() != null ) {
+            studentEntity.setDepartmentName( Enum.valueOf( DepartmentName.class, studentDtoRegis.getDepartmentName() ) );
         }
 
-        return list;
+        return studentEntity;
     }
 
     @Override
-    public Student studentDtoAuthToStudent(StudentRegistrDTO studentDtoAuth) {
-        if ( studentDtoAuth == null ) {
-            return null;
-        }
-
-        Student student = new Student();
-
-        student.setId( studentDtoAuth.getId() );
-        student.setFio( studentDtoAuth.getFio() );
-        student.setGroup( studentDtoAuth.getGroup() );
-        student.setPhoneNumber( studentDtoAuth.getPhoneNumber() );
-
-        return student;
-    }
-
-    @Override
-    public List<Student> studentDtoAuthListToStudentList(List<StudentRegistrDTO> studentDtoAuthList) {
-        if ( studentDtoAuthList == null ) {
-            return null;
-        }
-
-        List<Student> list = new ArrayList<Student>( studentDtoAuthList.size() );
-        for ( StudentRegistrDTO studentRegistrDTO : studentDtoAuthList ) {
-            list.add( studentDtoAuthToStudent( studentRegistrDTO ) );
-        }
-
-        return list;
-    }
-
-    @Override
-    public StudentFullTableDTO studentToStudentDtoFrontFull(Student student) {
+    public StudentFullTable studentEntityToStudentFullTable(StudentEntity student) {
         if ( student == null ) {
             return null;
         }
 
-        StudentFullTableDTO studentFullTableDTO = new StudentFullTableDTO();
+        StudentFullTable studentFullTable = new StudentFullTable();
 
-        studentFullTableDTO.setId( student.getId() );
-        studentFullTableDTO.setFio( student.getFio() );
-        studentFullTableDTO.setGroup( student.getGroup() );
-        studentFullTableDTO.setPhoneNumber( student.getPhoneNumber() );
+        studentFullTable.setId( student.getId() );
+        studentFullTable.setFio( student.getFio() );
+        if ( student.getGroup() != null ) {
+            studentFullTable.setGroup( String.valueOf( student.getGroup() ) );
+        }
+        studentFullTable.setPhoneNumber( student.getPhoneNumber() );
+        studentFullTable.setCourse( student.getCourse() );
+        if ( student.getDepartmentName() != null ) {
+            studentFullTable.setDepartmentName( student.getDepartmentName().name() );
+        }
 
-        return studentFullTableDTO;
+        return studentFullTable;
     }
 
     @Override
-    public List<StudentFullTableDTO> studentListToStudentDtoFullList(List<Student> students) {
-        if ( students == null ) {
+    public List<StudentFullTable> studentEntityListToStudentDtoFull(List<StudentEntity> studentEntityList) {
+        if ( studentEntityList == null ) {
             return null;
         }
 
-        List<StudentFullTableDTO> list = new ArrayList<StudentFullTableDTO>( students.size() );
-        for ( Student student : students ) {
-            list.add( studentToStudentDtoFrontFull( student ) );
+        List<StudentFullTable> list = new ArrayList<StudentFullTable>( studentEntityList.size() );
+        for ( StudentEntity studentEntity : studentEntityList ) {
+            list.add( studentEntityToStudentFullTable( studentEntity ) );
         }
 
         return list;
-    }
-
-    protected Student studentTableDTOToStudent(StudentTableDTO studentTableDTO) {
-        if ( studentTableDTO == null ) {
-            return null;
-        }
-
-        Student student = new Student();
-
-        student.setId( studentTableDTO.getId() );
-        student.setFio( studentTableDTO.getFio() );
-        student.setGroup( studentTableDTO.getGroup() );
-
-        return student;
     }
 }

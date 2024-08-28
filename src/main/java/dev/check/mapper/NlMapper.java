@@ -1,40 +1,41 @@
 package dev.check.mapper;
 
-import dev.check.DTO.NewsletterDTO;
-import dev.check.entity.Newsletter;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
-import org.mapstruct.ReportingPolicy;
-
-import java.util.List;
+import dev.check.DTO.Address;
+import dev.check.DTO.Newsletter;
+import dev.check.entity.*;
+import dev.check.entity.EnumEntity.DepartmentName;
+import dev.check.entity.EnumEntity.Role;
+import dev.check.entity.EnumEntity.Status;
+import org.mapstruct.*;
+import java.util.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface NlMapper {
 
-    public Newsletter newsletterDTOTonewsletter(NewsletterDTO nsDTO);
+    @Mapping(target = "addresses", ignore = true)
+    NewsletterEntity newsletterToNewsletterEntity(Newsletter newsletter);
 
-    public List<Newsletter>  newsletterDTOListTonewsletterList(List<NewsletterDTO> nsDTOList);
+    @Named("mapRole")
+    Role mapRole(String role);
 
-    @Mapping(target = "status", expression = "java(mapStatus(ns.getStatus()))" )
-    @Mapping(target = "mess", expression = "java(mapMess(ns.getMess()))" )
-    public NewsletterDTO newsletterToNewsletterDto(Newsletter ns);
+    @Named("mapDepartment")
+    DepartmentName mapDepartment(String departmentName);
 
-    public List<NewsletterDTO> newsletterListTonewsletterDtoList(List<Newsletter> nsList);
+    @Mappings({
+            @Mapping(source = "address.role", target = "role", qualifiedByName = "mapRole"),
+            @Mapping(source = "address.course", target = "course", defaultExpression = "java(null)"),
+            @Mapping(source = "address.department", target = "department", qualifiedByName = "mapDepartment", defaultExpression = "java(null)"),
+            @Mapping(source = "group", target = "group", defaultExpression = "java(null)"),
+            @Mapping(target = "newsletter", ignore = true)
+    })
+    AddressEntity addressToAddressEntity(Address address, String group);
 
-    default String mapMess(Boolean mess){
-        if(mess){
-            return "Отправлено";
-        }else{
-            return "В Очереди";
-        }
-    }
-    default String mapStatus(Boolean status){
-        if(status){
-            return "Доставлено";
-        }else{
-            return "Не Дошло(";
-        }
-    }
+    public Status stringToStatus(String status);
+    NewsletterEntity newsletterDtoToNewsletter(Newsletter nlDto);
+
+    Newsletter newsletterdEntityToNewsletter(NewsletterEntity entity);
+
+    List<Newsletter> newsletterEntityListToNewsletterList(List<NewsletterEntity> entities);
+
 }

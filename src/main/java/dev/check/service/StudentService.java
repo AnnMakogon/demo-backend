@@ -1,20 +1,16 @@
 package dev.check.service;
 
-import dev.check.DTO.StudentRegistrDTO;
-import dev.check.DTO.StudentTableDTO;
-import dev.check.DTO.StudentFullTableDTO;
-import dev.check.DTO.StudentUpdateDTO;
-import dev.check.IAuthenticationFacade;
-import dev.check.entity.Password;
-import dev.check.entity.Role;
-import dev.check.entity.Student;
-import dev.check.entity.User;
+import dev.check.DTO.StudentFullTable;
+import dev.check.DTO.StudentUpdate;
+import dev.check.entity.EnumEntity.Role;
+import dev.check.entity.StudentEntity;
+import dev.check.entity.UserEntity;
 import dev.check.mapper.StudentMapper;
-import dev.check.mapper.UserMapper;
 import dev.check.repositories.StudentRepository;
 import dev.check.repositories.UserRepository;
-import org.mapstruct.Named;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,94 +18,44 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Service
 public class StudentService {
-    /*
-    сделать crud в сервисе, принимать он должен dto, конвертировать в entity через mapstruct,
-    возвращать dto (в dto должны быть только нужные на фронте вещи, например, хэш пароля в списке возвращать не надо)
-    что такое Component пересмотри еще раз
-    что такое Repository, как инжектится
-    что такое Скоупы бинов спринга, какой дефолтный?
-
-    */
-
     @Autowired
     private StudentMapper studentDtoMapper;
 
     @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private  StudentRepository studentRepository;
+    private StudentRepository studentRepository;
 
     @Autowired
-    private  UserRepository userRepository;
+    private UserRepository userRepository;
 
-    @Autowired
-    private IAuthenticationFacade authenticationFacade;
-
-    public List<Student> getStudentsList() {
-        List<Student> list = StreamSupport.stream(studentRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
-        return list;
-    }
-    /*public StudentRegistrDTO addStudent(StudentRegistrDTO studentDtoAuth) {
-        if(studentDtoAuth.getRole() == ""){
-            studentDtoAuth.setRole("STUDENT");
-        }
-        Student student = studentDtoMapper.studentDtoAuthToStudent(studentDtoAuth);
-        User user = userMapper.studentDtoAuthToUser(studentDtoAuth);
-        userRepository.save(user);
-        studentRepository.save(student);
-        return studentDtoAuth;
-    }*/
-
-    public StudentUpdateDTO updateStudent(StudentUpdateDTO studentDto) {
-        if(studentDto.getId() == null){
+    public StudentUpdate updateStudent(StudentUpdate studentDto) {
+        if (studentDto.getId() == null) {
             throw new RuntimeException("id of changing student cannot be null");
         }
-        Student student = studentDtoMapper.studentDtoToStudent(studentDto);
+        StudentEntity student = studentDtoMapper.studentDtoToStudent(studentDto);
 
-        Student changingStudent = StreamSupport.stream(studentRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList()).stream()
-                .filter(el -> Objects.equals(el.getId(), student.getId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("student with id: " + student.getId() + "was not found"));
+        studentRepository.save(student);  // обновление в базе студентов
 
-        changingStudent.setId(studentDto.getId());
-        changingStudent.setFio(studentDto.getFio());
-        changingStudent.setGroup(studentDto.getGroup());
-        changingStudent.setPhoneNumber(student.getPhoneNumber());
+        //далее все для проверки того, меняется ли вошедший юзер
+        UsernamePasswordAuthenticationToken userData = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
-        studentRepository.save(changingStudent);
-
-        UsernamePasswordAuthenticationToken userData = authenticationFacade.getAuthentication();
-
-        User changingUser = StreamSupport.stream(userRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList()).stream()
-                .filter(el -> Objects.equals(el.getId(), student.getId()))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("student with id: " + student.getId() + "was not found"));
-
-        List<User> users = userRepository.getAllUsers();
-        String username = "";
-        for(User u : users) {
-            if (Objects.equals(u.getId(), student.getId())) {
-                if(Objects.equals(u.getUsername(), userData.getName())){
+        List<UserEntity> users = userRepository.getAllUsers();
+        String username = "";  // в базе
+        for (UserEntity u : users) {
+            if (Objects.equals(u.getId(), student.getId())) { //проверка: меняем ли юзера
+                if (Objects.equals(u.getUsername(), userData.getName())) {  //
                     username = u.getUsername();
                 }
-                changingUser.setId(studentDto.getId());
+                UserEntity changingUser = userRepository.findById(student.getId()).orElseThrow(() ->
+                        new RuntimeException("student with id: " + student.getId() + "was not found"));
                 changingUser.setUsername(studentDto.getFio());
-
-                changingUser.setRole(Role.valueOf(userData.getAuthorities().toString().substring(1, userData.getAuthorities().toString().length() - 1)));
-                changingUser.setPassword(new Password(""));
-                changingUser.setEnable(true);
-
-                if(Objects.equals(username, userData.getName())){
+                if (Objects.equals(username, userData.getName())) { // проверка и перезапись: изменяет ли вошедший сам себя(сравниваем userData.getName и changingUser.getFio )
                     Authentication thisAuth = SecurityContextHolder.getContext().getAuthentication();
                     Authentication newUser = new UsernamePasswordAuthenticationToken(
                             changingUser.getUsername(),
@@ -124,22 +70,38 @@ public class StudentService {
         return studentDto;
     }
 
-    public Long removeStudent(Long id) {
+    public void removeStudent(Long id) {
         studentRepository.deleteById(id);
-        return id;
     }
 
-    public List<StudentFullTableDTO> getStudents(String substring, Pageable pageable, String userName, String userRole ) {
+    //get всех студентов и проверка через contains какая роль у вошедшего человека
+    public Page<StudentFullTable> getStudents(String substring, Pageable pageable) {
 
-        List<Student> students = new ArrayList<>();
-        if(Objects.equals(userRole, "[STUDENT]")){
-            students = studentRepository.getStudentsStudent(substring, pageable, userName); //без телефонов остальных
+        UsernamePasswordAuthenticationToken userData = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        Page<StudentEntity> students;
+        if (getRoles(userData)) {
+            students = studentRepository.getStudentsStudent(substring, pageable, userData.getName()); //без телефонов остальных
         } else {
             students = studentRepository.getStudentsAdmin(substring, pageable); //полностью со всеми данными
         }
-        List<StudentFullTableDTO> studentsDto = studentDtoMapper.studentListToStudentDtoFullList(students);
+        return convertListToPage( studentDtoMapper.studentEntityListToStudentDtoFull(students.toList()), pageable);
+    }
 
-        return new ArrayList<>(studentsDto);
+    public static <T> Page<T> convertListToPage(List<T> list, Pageable pageable) {
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), list.size());
+        List<T> subList = list.subList(start, end);
+
+        return new PageImpl<>(subList, pageable, list.size());
+    }
+
+    private Boolean getRoles(UsernamePasswordAuthenticationToken userData){
+        List<Role> roles = userData.getAuthorities().stream()   // в поток
+                .map(auth -> Role.valueOf(auth.getAuthority())) // для каждого элемента
+                .collect(Collectors.toList());                  // в лист
+
+        List<Role> allRoles = new ArrayList<>(Arrays.asList(Role.values()));
+        return allRoles.contains(roles);
     }
 
 }

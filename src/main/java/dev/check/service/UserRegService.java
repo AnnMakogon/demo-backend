@@ -1,19 +1,17 @@
 package dev.check.service;
 
-import dev.check.DTO.StudentRegistrDTO;
-import dev.check.controller.AuthorizationController;
-import dev.check.controller.RegistrationController;
-import dev.check.entity.Password;
-import dev.check.entity.Student;
-import dev.check.entity.User;
+import dev.check.DTO.StudentRegistr;
+import dev.check.entity.PasswordEntity;
+import dev.check.entity.StudentEntity;
+import dev.check.entity.UserEntity;
 import dev.check.mapper.StudentMapper;
 import dev.check.mapper.UserMapper;
 import dev.check.repositories.StudentRepository;
 import dev.check.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
 
 @Service
 public class UserRegService {
@@ -26,21 +24,17 @@ public class UserRegService {
     private StudentRepository studentRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    private EmailService emailService;
 
-    public StudentRegistrDTO regStudent(StudentRegistrDTO studentRegistr) {
-        if(Objects.equals(studentRegistr.getRole(), "")){
-            studentRegistr.setRole("STUDENT");
-        }
-        Student student = studentDtoMapper.studentDtoAuthToStudent(studentRegistr);
-        User user = new User(studentRegistr.getFio(),
+    @Transactional
+    public StudentRegistr regStudent(StudentRegistr studentRegistr) {
+        StudentEntity student = studentDtoMapper.studentDtoRegistrToStudent(studentRegistr); //здесь уже enum
+        UserEntity user = new UserEntity(studentRegistr.getFio(),
                 userMapper.stringToRole(studentRegistr.getRole()),
-                new Password(studentRegistr.getPassword_id()),
+                new PasswordEntity(studentRegistr.getPasswordId()),
                 studentRegistr.isEnable(), studentRegistr.getEmail());
+        // что такое транзакции, если после сохранения userRepository упадет, какие данные будут в бд, почему?- см в "ВЫУЧИТЬ ДЛЯ ЗАДАЧИ"
         userRepository.save(user);
         studentRepository.save(student);
-        System.out.println("REEEEEEEEEEEEEEG UserRegService");
 
         return studentRegistr;
     }
