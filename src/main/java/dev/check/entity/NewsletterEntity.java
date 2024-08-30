@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -30,7 +31,7 @@ public class NewsletterEntity {
     private String subject;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "newsletter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<AddressEntity> addresses;
+    private List<AddressEntity> addresses = new ArrayList<>();
 
     private Boolean sent;
 

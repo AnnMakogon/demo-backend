@@ -22,5 +22,5 @@ public class Newsletter {
     private String subject;
     private List<Address> address;
     private Boolean sent; // отправлено или нет
-    private String status;  // дошло / есть ошибка / принято в обработку
+    private String status;  // дошло / есть ошибка / принято в обработку / не отправлено
 }

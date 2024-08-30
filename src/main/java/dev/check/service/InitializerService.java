@@ -44,7 +44,7 @@ public class InitializerService {
         address.setGroup(1.3f);
 
         NewsletterEntity newsletter = new NewsletterEntity();
-        newsletter.setDate(OffsetDateTime.now().plusSeconds(100));
+        newsletter.setDate(OffsetDateTime.now().plusSeconds(30));
         newsletter.setText("This is the newsletter text.");
         newsletter.setSubject("Newsletter Subject");
         newsletter.setSent(false);
@@ -529,7 +529,7 @@ public class InitializerService {
 
         OffsetDateTime[] dates = new OffsetDateTime[110];
 
-        OffsetDateTime currentTime = OffsetDateTime.now().plusSeconds(100);
+        OffsetDateTime currentTime = OffsetDateTime.now().plusSeconds(60);
         for (int i = 0; i < 110; i ++){
             dates[i] = currentTime.plusSeconds(30 * i);
         }
@@ -541,11 +541,11 @@ public class InitializerService {
 
         NewsletterEntity newsletterTest = new NewsletterEntity(
                 null,
-                OffsetDateTime.now().plusSeconds(100),
+                OffsetDateTime.now().plusSeconds(40),
                 "Proverka AAAAAAAAA",
                 "Proverka subject",
                 null,//addList,
-                true,
+                false,
                 Status.NOTSENT);
 
         add.setNewsletter(newsletterTest);
@@ -562,7 +562,7 @@ public class InitializerService {
                     "Proverka" + i,
                     "Proverka subject" + i,
                     null,
-                    true,
+                    false,
                     Status.NOTSENT)
             );
         }
@@ -585,7 +585,7 @@ public class InitializerService {
                     "Proverka" + i,
                     "Proverka subject" + i,
                     null,
-                    true,
+                    false,
                     Status.ERROR)
             );
         }
@@ -596,7 +596,7 @@ public class InitializerService {
                     "Proverka" + i,
                     "Proverka subject" + i,
                     null,
-                    true,
+                    false,
                     Status.NOTSENT)
             );
         }

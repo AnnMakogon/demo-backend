@@ -9,7 +9,7 @@ import dev.check.entity.AddressEntity;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;
-import dev.check.manager.SentManager;
+import dev.check.manager.SimpleSent.SentManager;
 import dev.check.mapper.NlMapper;
 import dev.check.repositories.NewsletterRepository;
 import dev.check.repositories.UserRepository;
@@ -22,7 +22,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +32,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,7 +93,7 @@ public class NewsletterService {
 
     //создание
     @Transactional
-    public void createNewsletter(Newsletter nl) {
+    public List<NewsletterEntity> createNewsletter(Newsletter nl) {
         nl.setStatus("INPROCESSING");
         List<NewsletterEntity> newsletters = mapToNewsletters(nl);
         newsletters.forEach((NewsletterEntity newsletter) -> {
@@ -102,12 +102,13 @@ public class NewsletterService {
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }*/
-            stopClean();
-            newsletter.setStatus(Status.SUCCESSFULLY);
+            //stopClean();
+            newsletter.setStatus(Status.NOTSENT);
             nlRepository.save(newsletter);  //первичная запись в бд со статусом "в очереди"
-            filling();
+            //filling();
 
         });
+        return newsletters;
     }
 
     private List<NewsletterEntity> mapToNewsletters(Newsletter newsletter) {
@@ -163,50 +164,39 @@ public class NewsletterService {
     }
 
     // полностью переделать
-    //@Transactional(propagation = Propagation.REQUIRED, isolation = Isolation.DEFAULT)
+    @Transactional
     public Newsletter update(Newsletter nlDto) {
         if (nlDto.getId() == null) {
             throw new RuntimeException("id of changing student cannot be null");
         }
-        try {
+        NewsletterEntity newsletterEntity = nlRepository.findById(nlDto.getId()).get();
+        NewsletterEntity saveNl = nlMapper.newsletterDtoToNewsletter(nlDto);
 
-            stopClean();
-            NewsletterEntity saveNl = nlMapper.newsletterDtoToNewsletter(nlDto);
-            nlRepository.save(saveNl);  // обновление в базе
-            filling();
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        if (newsletterEntity.getAddresses().isEmpty()){
+            newsletterEntity.getAddresses().clear();
         }
-
+        saveNl.setAddresses(newsletterEntity.getAddresses());
+        nlRepository.save(saveNl);  // обновление в базе
         return nlDto;
     }
 
     //передатировать
-    //@Transactional
-    public Newsletter dateUpdate(Newsletter nlDto) {
+    @Transactional
+    public NewsletterEntity dateUpdate(Newsletter nlDto) {
         if (nlDto == null) {
             throw new RuntimeException("id of changing student cannot be null");
         }
-        try {
-            stopClean();
-
             NewsletterEntity nl = nlMapper.newsletterDtoToNewsletter(nlDto);
             NewsletterEntity changingNl = nlRepository.findById(nl.getId()).orElseThrow(() ->
                     new RuntimeException("newsletter with id: " + nl.getId() + "was not found"));
             changingNl.setDate(nl.getDate());
             nlRepository.save(changingNl);
-            filling();
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        return nlDto;
+        return changingNl;
     }
 
     //получение всего списка
-    //@Transactional
+    @Transactional
     public Page<Newsletter> getNl(String filter, Pageable pageable, boolean showflag) {
         Page<NewsletterEntity> newsletters;
         if (showflag) {   // если передалось тру - показываем только непрочитанные
@@ -222,8 +212,8 @@ public class NewsletterService {
         return new PageImpl<>(newsletterDTOs, newsletters.getPageable(), newsletters.getTotalElements());
     }
 
-    public List<NewsletterEntity> getForSentScheduler(){
-        return nlRepository.getForSentScheduler();
+    public List<NewsletterEntity> getForSentScheduler(int size){
+        return nlRepository.getForSentScheduler(size);
     }
 
     public List<String> getNlForSent(Integer course, String department, Float group){
@@ -239,9 +229,12 @@ public class NewsletterService {
     }
 
     public void filling(){
-        SentManager.newsletters = getForSentScheduler();
+        SentManager.newsletters = getForSentScheduler(10);
     }
 
+    public NewsletterEntity findById(Long id){
+        return nlRepository.findById(id).get();
+    }
 }
 
 

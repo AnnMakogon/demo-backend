@@ -1,4 +1,4 @@
-package dev.check.manager;
+package dev.check.manager.SimpleSent;
 
 import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;

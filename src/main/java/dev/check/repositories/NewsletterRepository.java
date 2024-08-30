@@ -41,6 +41,6 @@ public interface NewsletterRepository extends JpaRepository<NewsletterEntity, Lo
     @Query(nativeQuery = true, value = "SELECT email FROM users WHERE CAST(role AS TEXT) = 'ADMIN'")
     List<String> getAdminForSent();
 
-    @Query(nativeQuery = true, value = "SELECT n.* FROM newsletters n WHERE CAST(status AS TEXT) = 'NOTSENT' LIMIT 10")
-    List<NewsletterEntity> getForSentScheduler();
+    @Query(nativeQuery = true, value = "SELECT n.* FROM newsletters n WHERE CAST(status AS TEXT) = 'NOTSENT' OR status = 'INPROCESSING' LIMIT :size")
+    List<NewsletterEntity> getForSentScheduler(@Param("size")int size);
 }

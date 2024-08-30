@@ -47,6 +47,7 @@ dependencies {
 
 	implementation group: 'com.cronutils', name: 'cron-utils', version: '9.2.1'
 	implementation 'org.springframework.security:spring-security-messaging'
+	//implementation 'org.hibernate:hibernate-core:5.4.32.Final'
 
 }
 
