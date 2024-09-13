@@ -8,7 +8,6 @@ import dev.check.service.NewsletterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -16,17 +15,15 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.time.Duration;
-import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Component
-@PropertySource("classpath:email.properties")
+//@PropertySource("classpath:email.yml")
 public class SentManagerOnTime {
     @Autowired
     private JavaMailSender emailSender;
@@ -37,41 +34,41 @@ public class SentManagerOnTime {
     @Value("${sentManagerOnTime.size}")
     private int size;
 
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(size+5);
-    //private List<NewsletterEntity> newsletters = Collections.synchronizedList( new ArrayList<>());
+    @Value("${sentManagers.defaultAddress}")
+    private String defaultAddress;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
     private ConcurrentMap<Long, NewsletterEntity> newsletters = new ConcurrentHashMap<>();
-    //private int currentIndex = 0; //номер текущего письма
 
     private AtomicInteger currentIndex = new AtomicInteger(0);
+
     public void scheduleNewsletter() {
-        //newsletters = newsletterService.getForSentScheduler(size);
         List<NewsletterEntity> newslettersList = newsletterService.getForSentScheduler(size);
-        if (newslettersList.isEmpty()){
+        if (newslettersList.isEmpty()) {
             log.info("All letter have been sent");
             return;
         }
-        for(NewsletterEntity newsletter : newslettersList){
-            newsletter.setStatus(Status.INPROCESSING);
-            newsletterService.save(newsletter);
+        for (NewsletterEntity newsletter : newslettersList) {
+            newsletterService.changeStatus(newsletter.getId(), Status.INPROCESSING);
             newsletters.put(newsletter.getId(), newsletter);
         }
         log.info("Newsletters size = " + newsletters.size());
+
         processNextLatter();
-        //scheduler.schedule(() -> scheduler.shutdown(), 10, TimeUnit.MINUTES);
     }
 
-    private void processNextLatter(){
+    private void processNextLatter() {
         List<NewsletterEntity> queue = new ArrayList<>();
-        long index = (long) currentIndex.getAndAdd(size);
-        for (int i = 0; i < 5 && index <= newsletters.size(); i ++){
+        long index = currentIndex.getAndAdd(size);
+        for (int i = 0; i < 5 && index <= newsletters.size(); i++) {
             NewsletterEntity newsletter = newsletters.get(index + i);
-            if(newsletters.get(index + i) != null){
+            if (newsletters.get(index + i) != null) {
                 queue.add(newsletter);
             }
         }
         log.info("Queue[1]: " + queue.get(0).getId());
 
-        if (queue.isEmpty()){
+        if (queue.isEmpty()) {
             log.info("All letter have been sent");
             return;
         }
@@ -81,6 +78,10 @@ public class SentManagerOnTime {
         }
 
         scheduler.schedule(this::scheduleNewsletter, calculateTime(queue), TimeUnit.MILLISECONDS);
+
+        ThreadPoolExecutor executor = (ThreadPoolExecutor) scheduler;
+        log.info("Size of the scheduler: " + executor.getPoolSize());
+
         log.info("Next " + size + " letters in the queue, queue[1].id = " + queue.get(0).getId());
     }
 
@@ -90,7 +91,7 @@ public class SentManagerOnTime {
         OffsetDateTime now = OffsetDateTime.now();
         long initialDelay = Duration.between(now, sendTime).toMillis();
 
-        if (initialDelay < 0){
+        if (initialDelay < 0) {
             initialDelay = 0;
         }
 
@@ -98,7 +99,7 @@ public class SentManagerOnTime {
         return initialDelay + 100;
     }
 
-    private void scheduleNewsletterSend(NewsletterEntity newsletter){
+    private void scheduleNewsletterSend(NewsletterEntity newsletter) {
         OffsetDateTime sendTime = newsletter.getDate();
         long initialDelay = Duration.between(OffsetDateTime.now(), sendTime).toMillis();
 
@@ -110,14 +111,14 @@ public class SentManagerOnTime {
         Runnable task = () -> {
             try {
                 NewsletterEntity currentNewsletter = newsletterService.findById(newsletter.getId());
-                if(currentNewsletter != null) {
+                if (currentNewsletter != null) {
                     if (currentNewsletter.getAddresses().isEmpty()) {
-                        schedulerSendMessage(currentNewsletter, "myworkemail033@mail.ru");
+                        schedulerSendMessage(currentNewsletter, defaultAddress);
                     } else {
                         for (AddressEntity address : currentNewsletter.getAddresses()) {
 
                             log.info("Size of addresses: " + currentNewsletter.getAddresses().size());
-                            List<String> emails = newsletterService.getNlForSent(address.getCourse(), address.getDepartment().toString(), address.getGroup());
+                            List<String> emails = newsletterService.getEmailForSent(address.getCourse(), address.getDepartment().toString(), address.getGroup());
                             log.info("Size of emails: " + emails.size());
                             for (String email : emails) {
                                 schedulerSendMessage(currentNewsletter, email);
@@ -125,7 +126,7 @@ public class SentManagerOnTime {
                         }
                     }
                 }
-            } catch (MessagingException e){
+            } catch (MessagingException e) {
                 throw new RuntimeException(e);
             }
         };
@@ -133,7 +134,7 @@ public class SentManagerOnTime {
     }
 
     //имея рассылку и адрес, уже отправляем
-    public void schedulerSendMessage(NewsletterEntity newsletter, String email) throws MessagingException {
+    private void schedulerSendMessage(NewsletterEntity newsletter, String email) throws MessagingException {
 
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -147,7 +148,7 @@ public class SentManagerOnTime {
         newsletter.setSent(true);
         newsletterService.save(newsletter);
 
-        log.info("Letter "+ newsletter.getId() + " ----  Date of letter: " + newsletter.getDate() + ". Thread: " + Thread.currentThread().getName()); // логирование для проверки
+        log.info("Letter " + newsletter.getId() + " ----  Date of letter: " + newsletter.getDate() + ". Thread: " + Thread.currentThread().getName()); // логирование для проверки
     }
 
     // переделывание полностью
@@ -172,7 +173,7 @@ public class SentManagerOnTime {
         if (removed) {
             log.info("Deleted newsletter with id: " + id);
         } else {
-          log.warn("Newsletter with id: " + id + " not found in the queue");
+            log.warn("Newsletter with id: " + id + " not found in the queue");
         }
         return id;
     }
@@ -185,9 +186,12 @@ public class SentManagerOnTime {
     }
 
     //создание
-    public void createNewsletter(Newsletter nl){
-        newsletterService.createNewsletter(nl).forEach( newsletter -> {
+    public List<Long> createNewsletter(Newsletter nl) {
+        List<Long> idList = new ArrayList<>();
+        newsletterService.createNewsletter(nl).forEach(newsletter -> {
             newsletters.put(newsletter.getId(), newsletter);
+            idList.add(newsletter.getId());
         });
+        return idList;
     }
 }

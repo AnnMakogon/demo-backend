@@ -1,0 +1,27 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: makogon.anna11.10@gmail.com
+    password: coky zgzt jwdj dxhd
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+emailService:
+  registr:
+    url: http://localhost:4200/saveregistration
+    textHolder: this link
+    subject: Registration on app Check
+    text: |
+      Dear User, <br><br>
+      you have registered in the Check application, to confirm, follow:
+
+sentManagerOnTime:
+  size: 5
+
+sentManagers:
+  defaultAddress: myworkemail033@mail.ru

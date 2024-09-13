@@ -15,8 +15,6 @@ import java.util.List;
 public class Newsletter {
 
     private Long id;
-
-
     private OffsetDateTime date;
     private String text;
     private String subject;

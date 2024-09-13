@@ -20,11 +20,13 @@ public class User {
     private String role;
     private boolean enable;
 
-    public User(Principal principal, UserRepository userRepository1){
+    public User(Principal principal, UserRepository userRepository1) {
+
+        //todo убрать, dto - тупые, тут ничего не должно быть, кроме данных
         UsernamePasswordAuthenticationToken userData = (UsernamePasswordAuthenticationToken) principal;
         this.id = userRepository1.findIdByName(userData.getName());
         this.username = userData.getName();
-        this.role =  String.valueOf(userData.getAuthorities());
+        this.role = String.valueOf(userData.getAuthorities());
         this.enable = true;
     }
 

@@ -22,9 +22,6 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
     @Query(nativeQuery = true, value = "SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END FROM Users u WHERE u.username = :username")
     public boolean findUserByName(@Param("username") String username);
 
-    @Query(nativeQuery = true, value = "SELECT u.email FROM Users u")
-    public List<String> getAllEmail();
-
     @Query(nativeQuery = true, value = "SELECT u.email " +
             "FROM users u " +
             "JOIN students s ON u.student_id = s.id " +
@@ -32,7 +29,7 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
             "(s.department_name = :department)) " +
             "AND s.course = :course " +
             "AND s.group_of_students = :group_of_student")
-    List<String> getNlForSent(@Param("course") Integer course, @Param("department") String department,
+    public List<String> getNlForSent(@Param("course") Integer course, @Param("department") String department,
                               @Param("group_of_student") Float group);
 
 }

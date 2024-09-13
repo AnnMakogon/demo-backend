@@ -3,40 +3,42 @@ package dev.check.controller;
 import dev.check.DTO.Newsletter;
 import dev.check.DTO.ParamForGet;
 import dev.check.FindError500;
-import dev.check.controller.errorhandler.NewsletterNullError;
+import dev.check.controller.errorHandler.NewsletterNullError;
+import dev.check.manager.ManagerUtils;
 import dev.check.manager.SentOnTime.SentManagerOnTime;
 import dev.check.service.NewsletterService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.mail.MessagingException;
+import java.util.List;
 
 @RestController
 @FindError500
 @Slf4j
+@RequiredArgsConstructor
 @RequestMapping("/api/mail")  //не влияет на webSocket
 public class EmailController {
 
-    @Autowired
-    private NewsletterService emailService;
+    // private final required args constructor чем лучше - тем, что позволяет создавать final поля через конструктор,
+    // которые явно создаются в конструкторе lombok
 
-    @Autowired
-    private SentManagerOnTime sentManagerOnTime;
+    private final NewsletterService emailService;
 
-    // создание
+    //todo создать сообщение через сервис, в сервисе вызывать менеджер
+
+    private final SentManagerOnTime sentManagerOnTime;
+
     @PostMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> messNewsletter(@RequestBody Newsletter nl) throws NewsletterNullError {
+    public List<Long> createNewsletter(@RequestBody Newsletter nl) throws NewsletterNullError {
         log.info("Received newsletter: " + nl);
         if (nl.getDate() == null || nl.getText() == null) {
             throw new NewsletterNullError();
         }
-        //emailService.createNewsletter(nl);
-        sentManagerOnTime.createNewsletter(nl);
-        return ResponseEntity.ok().build();
+        //return emailService.createNewsletter(nl);
+        return sentManagerOnTime.createNewsletter(nl);
     }
 
     //изменить все
@@ -54,6 +56,7 @@ public class EmailController {
         return sentManagerOnTime.dateUpdate(changingNlId);
     }
 
+    //удаление
     @DeleteMapping(value = "newsletter/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Long deleteNl(@PathVariable("id") Long id) {
         //return emailService.deleteNl(id);
@@ -62,7 +65,10 @@ public class EmailController {
 
     @GetMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Newsletter> getNlPagSortFilter(@ModelAttribute ParamForGet request) {
-        return emailService.getNl(request.getFilter(), ControllerUtils.createPageable(request.getPage(), request.getSize(), request.getColumn(), request.getDirection()), request.isShowFlag());
+        return emailService.getNl(request.getFilter(),
+                ManagerUtils.createPageable(
+                request.getPage(), request.getSize(), request.getColumn(), request.getDirection()), request.isShowFlag()
+        );
     }
 
 }

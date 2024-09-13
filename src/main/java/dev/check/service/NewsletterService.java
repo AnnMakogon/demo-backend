@@ -9,14 +9,12 @@ import dev.check.entity.AddressEntity;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;
-import dev.check.manager.SimpleSent.SentManager;
 import dev.check.mapper.NlMapper;
 import dev.check.repositories.NewsletterRepository;
 import dev.check.repositories.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -32,12 +30,10 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimeZone;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-@PropertySource("classpath:email.properties")
 public class NewsletterService {
 
     @Autowired
@@ -81,12 +77,13 @@ public class NewsletterService {
 
             String link = "<a href='" + urlWithJson + "'>" + this.textHolder + "</a>";
             String fullText = "<html><body>" +
-                              "<p>" + this.text + "</p>" +
-                              "<p>" + link + "</p>" +
-                              "</body></html>";
+                    "<p>" + this.text + "</p>" +
+                    "<p>" + link + "</p>" +
+                    "</body></html>";
             helper.setText(fullText, true);
             emailSender.send(message);
-        } catch (MessagingException | JsonProcessingException | UnsupportedEncodingException exception) {
+        } catch (JsonProcessingException | UnsupportedEncodingException |
+                 MessagingException exception) {
             exception.printStackTrace();
         }
     }
@@ -97,16 +94,9 @@ public class NewsletterService {
         nl.setStatus("INPROCESSING");
         List<NewsletterEntity> newsletters = mapToNewsletters(nl);
         newsletters.forEach((NewsletterEntity newsletter) -> {
-            /*try {
-                sentManager.sentNewsletter(newsletter);
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }*/
-            //stopClean();
             newsletter.setStatus(Status.NOTSENT);
+            newsletter.setDate(newsletter.getDate().minusHours(3));
             nlRepository.save(newsletter);  //первичная запись в бд со статусом "в очереди"
-            //filling();
-
         });
         return newsletters;
     }
@@ -172,10 +162,11 @@ public class NewsletterService {
         NewsletterEntity newsletterEntity = nlRepository.findById(nlDto.getId()).get();
         NewsletterEntity saveNl = nlMapper.newsletterDtoToNewsletter(nlDto);
 
-        if (newsletterEntity.getAddresses().isEmpty()){
+        if (newsletterEntity.getAddresses().isEmpty()) {
             newsletterEntity.getAddresses().clear();
         }
         saveNl.setAddresses(newsletterEntity.getAddresses());
+        saveNl.setDate(saveNl.getDate().minusHours(3));
         nlRepository.save(saveNl);  // обновление в базе
         return nlDto;
     }
@@ -186,11 +177,12 @@ public class NewsletterService {
         if (nlDto == null) {
             throw new RuntimeException("id of changing student cannot be null");
         }
-            NewsletterEntity nl = nlMapper.newsletterDtoToNewsletter(nlDto);
-            NewsletterEntity changingNl = nlRepository.findById(nl.getId()).orElseThrow(() ->
-                    new RuntimeException("newsletter with id: " + nl.getId() + "was not found"));
-            changingNl.setDate(nl.getDate());
-            nlRepository.save(changingNl);
+        NewsletterEntity nl = nlMapper.newsletterDtoToNewsletter(nlDto);
+        NewsletterEntity changingNl = nlRepository.findById(nl.getId()).orElseThrow(() ->
+                new RuntimeException("newsletter with id: " + nl.getId() + "was not found"));
+        changingNl.setDate(nl.getDate());
+        changingNl.setDate(changingNl.getDate().minusHours(3));
+        nlRepository.save(changingNl);
 
         return changingNl;
     }
@@ -212,29 +204,27 @@ public class NewsletterService {
         return new PageImpl<>(newsletterDTOs, newsletters.getPageable(), newsletters.getTotalElements());
     }
 
-    public List<NewsletterEntity> getForSentScheduler(int size){
+    public List<NewsletterEntity> getForSentScheduler(int size) {
         return nlRepository.getForSentScheduler(size);
     }
 
-    public List<String> getNlForSent(Integer course, String department, Float group){
+    public List<String> getEmailForSent(Integer course, String department, Float group) {
         return userRepository.getNlForSent(course, department, group);
     }
 
-    public void save(NewsletterEntity newsletter){
+    public void save(NewsletterEntity newsletter) {
         nlRepository.save(newsletter);
     }
 
-    public void stopClean(){
-        SentManager.newsletters = null;
+    @Transactional
+    public void changeStatus(Long id, Status status) {
+        nlRepository.changeStatus(id, status.toString());
     }
 
-    public void filling(){
-        SentManager.newsletters = getForSentScheduler(10);
-    }
-
-    public NewsletterEntity findById(Long id){
+    public NewsletterEntity findById(Long id) {
         return nlRepository.findById(id).get();
     }
+
 }
 
 

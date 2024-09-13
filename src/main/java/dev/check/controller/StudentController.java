@@ -4,7 +4,9 @@ import dev.check.DTO.ParamForGet;
 import dev.check.DTO.StudentFullTable;
 import dev.check.DTO.StudentUpdate;
 import dev.check.FindError500;
+import dev.check.manager.ManagerUtils;
 import dev.check.service.StudentService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -14,10 +16,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @FindError500
 @RequestMapping("/api/base")
+@RequiredArgsConstructor
 public class StudentController {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
 
     @PutMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
     public StudentUpdate changeStudent(@RequestBody StudentUpdate changingStudent) {
@@ -25,14 +27,14 @@ public class StudentController {
     }
 
     @DeleteMapping(value = "students/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> deleteStudent(@PathVariable("id") Long id) {
+    public Long deleteStudent(@PathVariable("id") Long id) {
         studentService.removeStudent(id);
-        return ResponseEntity.ok().build();
+        return id;
     }
 
     @GetMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<StudentFullTable> getStudentsPagSortFilter(@ModelAttribute ParamForGet request) {
-        return studentService.getStudents(request.getFilter(), ControllerUtils.createPageable(request.getPage(), request.getSize(), request.getColumn(), request.getDirection()));
+        return studentService.getStudents(request.getFilter(), ManagerUtils.createPageable(request.getPage(), request.getSize(), request.getColumn(), request.getDirection()));
     }
 
 }

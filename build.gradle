@@ -23,6 +23,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+	//implementation 'org.liquibase:liquibase-core'
+
 	implementation 'org.postgresql:postgresql:42.5.0'
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -47,10 +50,11 @@ dependencies {
 
 	implementation group: 'com.cronutils', name: 'cron-utils', version: '9.2.1'
 	implementation 'org.springframework.security:spring-security-messaging'
-	//implementation 'org.hibernate:hibernate-core:5.4.32.Final'
-
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+tasks.withType(JavaCompile) {
+	options.compilerArgs += ['-Xlint:deprecation']
 }

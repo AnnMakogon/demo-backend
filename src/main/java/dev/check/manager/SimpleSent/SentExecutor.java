@@ -22,7 +22,7 @@ public class SentExecutor {
 
     @Autowired
     private NewsletterService newsletterService;
-    // и, имея рассылку и адрес, уже отправляем
+
     @Async
     public void schedulerSendMessage(NewsletterEntity newsletter, String email) throws MessagingException {
 
@@ -34,9 +34,8 @@ public class SentExecutor {
 
         emailSender.send(message); // отправка письма
 
-        newsletter.setStatus(Status.SUCCESSFULLY);
-        newsletterService.save(newsletter);
+        newsletterService.changeStatus(newsletter.getId(), Status.SUCCESSFULLY);
 
-        log.info("Letter "+ newsletter.getId() + " ----  Now: {}. Thread: {}", LocalTime.now(), Thread.currentThread().getName()); // логирование для проверки
+        log.info("Letter " + newsletter.getId() + " ----  Now: {}. Thread: {}", LocalTime.now(), Thread.currentThread().getName()); // логирование для проверки
     }
 }

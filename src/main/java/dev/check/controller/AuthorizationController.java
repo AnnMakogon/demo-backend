@@ -3,6 +3,7 @@ package dev.check.controller;
 import dev.check.DTO.User;
 import dev.check.repositories.UserRepository;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,11 +20,10 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api")
 @Slf4j
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class AuthorizationController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @PostMapping(value = "/login")
     public User apiLogin(Principal principal) {

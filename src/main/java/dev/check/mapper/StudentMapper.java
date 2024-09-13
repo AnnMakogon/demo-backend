@@ -17,7 +17,7 @@ public interface StudentMapper {
 
     public StudentEntity studentDtoRegistrToStudent(StudentRegistr studentDtoRegis);
 
-    StudentFullTable studentEntityToStudentFullTable(StudentEntity student);
-    List<StudentFullTable> studentEntityListToStudentDtoFull(List<StudentEntity> studentEntityList);
+    public StudentFullTable studentEntityToStudentFullTable(StudentEntity student);
 
+    public List<StudentFullTable> studentEntityListToStudentDtoFull(List<StudentEntity> studentEntityList);
 }

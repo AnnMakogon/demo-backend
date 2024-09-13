@@ -1,6 +1,5 @@
 package dev.check.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,8 +28,4 @@ public class PasswordEntity {
 
     private String password;
 
-    @JsonIgnore
-    private void setPasswordWithEncoding(String password) {
-        this.password = passwordEncoder.encode(password);
-    }
 }

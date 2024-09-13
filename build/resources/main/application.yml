@@ -1,0 +1,22 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQL9Dialect
+    hibernate:
+      ddl-auto: create
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/Test?useUnicode=yes&characterEncoding=UTF-8
+    username: postgres
+    password: 1234
+  jackson:
+    time-zone: Europe/Moscow
+  config:
+    import: "classpath:email.yml"
+  #liquibase:
+    #change-log: classpath:liquibase/changelog.yml
+
+websocket:
+  origins: 'http://localhost:4200'
+

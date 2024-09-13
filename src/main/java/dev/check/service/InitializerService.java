@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.PostConstruct;
 import java.time.OffsetDateTime;
 import java.util.*;
 
@@ -530,7 +529,7 @@ public class InitializerService {
         OffsetDateTime[] dates = new OffsetDateTime[110];
 
         OffsetDateTime currentTime = OffsetDateTime.now().plusSeconds(60);
-        for (int i = 0; i < 110; i ++){
+        for (int i = 0; i < 110; i++) {
             dates[i] = currentTime.plusSeconds(30 * i);
         }
 
@@ -605,11 +604,6 @@ public class InitializerService {
     }
 
     // массив имен для студентов
-
-    private static final Float[] groupNumber = {
-            1f, 2.1f, 2.2f, 3.1f, 3.2f, 3.3f, 3.4f
-    };
-
     private static final String[] FIO = {
             "Алла Борисовна", "Петров Иван Николаевич", "Сидорова Мария Ивановна",
             "Кузнецова София Леонидовна", "Попова Екатерина Дмитриевна", "Васильев Дмитрий Петрович",

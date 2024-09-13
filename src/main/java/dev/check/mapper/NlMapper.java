@@ -7,6 +7,7 @@ import dev.check.entity.EnumEntity.DepartmentName;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.EnumEntity.Status;
 import org.mapstruct.*;
+
 import java.util.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
@@ -14,13 +15,13 @@ import java.util.*;
 public interface NlMapper {
 
     @Mapping(target = "addresses", ignore = true)
-    NewsletterEntity newsletterToNewsletterEntity(Newsletter newsletter);
+    public NewsletterEntity newsletterToNewsletterEntity(Newsletter newsletter);
 
     @Named("mapRole")
-    Role mapRole(String role);
+    public Role mapRole(String role);
 
     @Named("mapDepartment")
-    DepartmentName mapDepartment(String departmentName);
+    public DepartmentName mapDepartment(String departmentName);
 
     @Mappings({
             @Mapping(source = "address.role", target = "role", qualifiedByName = "mapRole"),
@@ -29,13 +30,14 @@ public interface NlMapper {
             @Mapping(source = "group", target = "group", defaultExpression = "java(null)"),
             @Mapping(target = "newsletter", ignore = true)
     })
-    AddressEntity addressToAddressEntity(Address address, String group);
+    public AddressEntity addressToAddressEntity(Address address, String group);
 
     public Status stringToStatus(String status);
-    NewsletterEntity newsletterDtoToNewsletter(Newsletter nlDto);
 
-    Newsletter newsletterdEntityToNewsletter(NewsletterEntity entity);
+    public NewsletterEntity newsletterDtoToNewsletter(Newsletter nlDto);
 
-    List<Newsletter> newsletterEntityListToNewsletterList(List<NewsletterEntity> entities);
+    public Newsletter newsletterdEntityToNewsletter(NewsletterEntity entity);
+
+    public List<Newsletter> newsletterEntityListToNewsletterList(List<NewsletterEntity> entities);
 
 }

@@ -5,6 +5,7 @@ import dev.check.repositories.UserRepository;
 import dev.check.service.NewsletterService;
 import dev.check.service.UserRegService;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,21 +16,20 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @Slf4j
-@NoArgsConstructor
 @Controller
+@RequiredArgsConstructor
 public class RegistrationController {
 
-    @Autowired
-    private UserRegService userRegService;
-    @Autowired
-    private NewsletterService emailService;
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRegService userRegService;
 
-    // отправка письма только
+    private final NewsletterService emailService;
+
+    private final UserRepository userRepository;
+
+    //todo как делать регистрацию с подтверждением через email
     @PostMapping(value = "/api/base/registration", produces = MediaType.APPLICATION_JSON_VALUE)
     public StudentRegistr sendMail(@RequestBody StudentRegistr newStudent) {
-        if(userRepository.findUserByName(newStudent.getFio())){
+        if (userRepository.findUserByName(newStudent.getFio())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "username already exist");
         }
         emailService.sendSimpleMessage(newStudent);

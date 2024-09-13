@@ -16,6 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ public class StudentService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public StudentUpdate updateStudent(StudentUpdate studentDto) {
         if (studentDto.getId() == null) {
             throw new RuntimeException("id of changing student cannot be null");
@@ -70,11 +72,13 @@ public class StudentService {
         return studentDto;
     }
 
+    @Transactional
     public void removeStudent(Long id) {
         studentRepository.deleteById(id);
     }
 
     //get всех студентов и проверка через contains какая роль у вошедшего человека
+    @Transactional
     public Page<StudentFullTable> getStudents(String substring, Pageable pageable) {
 
         UsernamePasswordAuthenticationToken userData = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
@@ -84,18 +88,15 @@ public class StudentService {
         } else {
             students = studentRepository.getStudentsAdmin(substring, pageable); //полностью со всеми данными
         }
-        return convertListToPage( studentDtoMapper.studentEntityListToStudentDtoFull(students.toList()), pageable);
+        return mappToPage(students);
     }
 
-    public static <T> Page<T> convertListToPage(List<T> list, Pageable pageable) {
-        int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), list.size());
-        List<T> subList = list.subList(start, end);
-
-        return new PageImpl<>(subList, pageable, list.size());
+    private Page<StudentFullTable> mappToPage(Page<StudentEntity> students) {
+        List<StudentFullTable> newsletterDTOs = studentDtoMapper.studentEntityListToStudentDtoFull(students.getContent());// nlMapper.newsletterEntityListToNewsletterList(newsletters.getContent());
+        return new PageImpl<>(newsletterDTOs, students.getPageable(), students.getTotalElements());
     }
 
-    private Boolean getRoles(UsernamePasswordAuthenticationToken userData){
+    private Boolean getRoles(UsernamePasswordAuthenticationToken userData) {
         List<Role> roles = userData.getAuthorities().stream()   // в поток
                 .map(auth -> Role.valueOf(auth.getAuthority())) // для каждого элемента
                 .collect(Collectors.toList());                  // в лист

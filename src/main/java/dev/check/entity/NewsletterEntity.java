@@ -1,12 +1,14 @@
 package dev.check.entity;
 
 import dev.check.entity.EnumEntity.Status;
+
+import javax.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +28,12 @@ public class NewsletterEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "newsletter_seq")
     private Long id;
 
+    @Column(name = "date", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime date;
     private String text;
     private String subject;
 
+    //todo lazy запрос через fetch lazy сущности
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "newsletter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AddressEntity> addresses = new ArrayList<>();
 
@@ -37,5 +41,4 @@ public class NewsletterEntity {
 
     @Enumerated(EnumType.STRING)
     private Status status;
-
 }
