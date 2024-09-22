@@ -1,16 +1,14 @@
 package dev.check.controller;
 
-import dev.check.DTO.ParamForGet;
-import dev.check.DTO.StudentFullTable;
-import dev.check.DTO.StudentUpdate;
+import dev.check.dto.ParamForGet;
+import dev.check.dto.StudentFullTable;
+import dev.check.dto.StudentUpdate;
 import dev.check.FindError500;
 import dev.check.manager.ManagerUtils;
 import dev.check.service.StudentService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

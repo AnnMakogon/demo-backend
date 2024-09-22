@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<migration>
+    <changeSet id="1" author="Ann">
+        <createTable tableName="addresses">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+                <generatedValue class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                    <parameters>
+                        <parameter name="sequence_name" value="add_seq"/>
+                    </parameters>
+                </generatedValue>
+            </column>
+            <column name="role" type="varchar(20)"/>
+            <column name="course_id" type="bigint">
+                <constraints foreignKeyName="fk_addresses_courses" references="courses(id)"/>
+            </column>
+            <column name="newsletter_id" type="bigint">
+                <constraints foreignKeyName="fk_addresses_newsletters" references="newsletters(id)"/>
+            </column>
+        </createTable>
+        <createTable tableName="address_groups">
+            <column name="address_id" type="bigint">
+                <constraints foreignKeyName="fk_address_groups_addresses" references="addresses(id)"/>
+            </column>
+            <column name="group_id" type="bigint">
+                <constraints foreignKeyName="fk_address_groups_groups" references="groups(id)"/>
+            </column>
+        </createTable>
+        <createTable tableName="address_departments">
+            <column name="address_id" type="bigint">
+                <constraints foreignKeyName="fk_address_departments_addresses" references="addresses(id)"/>
+            </column>
+            <column name="department_id" type="bigint">
+                <constraints foreignKeyName="fk_address_departments_departments" references="departments(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+</migration>

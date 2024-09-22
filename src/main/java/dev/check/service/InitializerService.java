@@ -1,13 +1,10 @@
 package dev.check.service;
 
 import dev.check.entity.*;
-import dev.check.entity.EnumEntity.DepartmentName;
-import dev.check.entity.EnumEntity.Role;
-import dev.check.entity.EnumEntity.Status;
-import dev.check.repositories.AddressRepository;
-import dev.check.repositories.NewsletterRepository;
-import dev.check.repositories.StudentRepository;
-import dev.check.repositories.UserRepository;
+import dev.check.entity.Auxiliary.AddressDepartmentEntity;
+import dev.check.entity.Auxiliary.AddressGroupEntity;
+import dev.check.entity.EnumEntity.*;
+import dev.check.repositories.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,33 +23,508 @@ public class InitializerService {
     private UserRepository userRepository;
 
     @Autowired
-    private AddressRepository addressRepository;
+    private NewsletterRepository newsletterRepository;
 
     @Autowired
-    private NewsletterRepository nlRepository;
+    private DepartmentRepository departmentRepository;
 
-    @Transactional
-    public void initial() {
+    private void initialStudent(){
+        //////////////////   STUDENTы со связью с USERами, кафедрой, группой  ///////////////////
 
-        ///////    ADMIN без связи со студентом, логично //////
+        // заполнение с учетом схемы: На 1 курсе: 1.1, 1.2, 1.3, 2.1, 3.1, 3.2,      2-3 курс: kfa: 1.1, 1.2, 1.3,  kma: 2.1, kucp: 3.1, 3.2
+        for (long j = 0L; j <= 5; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_1),
+                    "+89" + (100 - j),
+                    1,
+                    null,
+                    null
+            );
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }  // 1 1.1
+        for (long j = 6L; j <= 10; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_2),
+                    "+89" + (100 - j),
+                    1,
+                    null,
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        } // 1 1.2
+        for (long j = 11L; j <= 15; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_3),
+                    "+89" + (100 - j),
+                    1,
+                    null,
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 1 1.3
+        for (long j = 16L; j <= 20; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_2_1),
+                    "+89" + (100 - j),
+                    1,
+                    null,
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 1 2.1
+        for (long j = 21L; j <= 25; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_3_1),
+                    "+89" + (100 - j),
+                    1,
+                    null,
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 1 3.1
+        for (long j = 26L; j <= 30; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_3_2),
+                    "+89" + (100 - j),
+                    1,
+                    null,
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 1 3.2
+
+        for (long j = 31L; j <= 35; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_1),
+                    "+89" + (100 - j),
+                    2,
+                    new DepartmentEntity(DepartmentName.KFA),
+                    null
+            );
+            studentRepository.save(student0);
+
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 2 1.1
+        for (long j = 36L; j <= 40; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_2),
+                    "+89" + (100 - j),
+                    2,
+                    new DepartmentEntity(DepartmentName.KFA),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 2 1.2
+        for (long j = 41L; j <= 45; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_3),
+                    "+89" + (100 - j),
+                    2,
+                    new DepartmentEntity(DepartmentName.KFA),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 2 1.3
+        for (long j = 46L; j <= 50; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_2_1),
+                    "+89" + (100 - j),
+                    2,
+                    new DepartmentEntity(DepartmentName.KMA),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 2 2.1
+        for (long j = 51L; j <= 55; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_3_1),
+                    "+89" + (100 - j),
+                    2,
+                    new DepartmentEntity(DepartmentName.KUCP),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 2 3.1
+        for (long j = 56L; j <= 60; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_3_2),
+                    "+89" + (100 - j),
+                    2,
+                    new DepartmentEntity(DepartmentName.KUCP),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 2 3.2
+
+        for (long j = 61L; j <= 65; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_1),
+                    "+89" + (100 - j),
+                    3,
+                    new DepartmentEntity(DepartmentName.KFA),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 3 1.1
+        for (long j = 66L; j <= 70; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_2),
+                    "+89" + (100 - j),
+                    3,
+                    new DepartmentEntity(DepartmentName.KFA),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 3 1.2
+        for (long j = 71L; j <= 75; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_1_3),
+                    "+89" + (100 - j),
+                    3,
+                    new DepartmentEntity(DepartmentName.KFA),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 3 1.3
+        for (long j = 76L; j <= 80; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_2_1),
+                    "+89" + (100 - j),
+                    3,
+                    new DepartmentEntity(DepartmentName.KMA),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 3 2.1
+        for (long j = 81L; j <= 85; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_3_1),
+                    "+89" + (100 - j),
+                    3,
+                    new DepartmentEntity(DepartmentName.KUCP),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 3 3.1
+        for (long j = 86L; j <= 90; j++) {
+            StudentEntity student0 = new StudentEntity(
+                    null,
+                    FIO[(int) (j % FIO.length)],
+                    new GroupEntity(GroupNumber.GROUP_3_2),
+                    "+89" + (100 - j),
+                    3,
+                    new DepartmentEntity(DepartmentName.KUCP),
+                    null
+            );
+            studentRepository.save(student0);
+            UserEntity user0 = new UserEntity(
+                    "student " + j,
+                    Role.STUDENT,
+                    new PasswordEntity("1234"),
+                    true,
+                    "myworkemail033@mail.ru",
+                    student0
+            );
+            userRepository.save(user0);
+
+            student0.setUser(user0);
+            studentRepository.save(student0);
+        }// 3 3.2
+    }
+
+    private void initialNewsletterWithAddress(){
         // сохранение рассылки с адресом
-        AddressEntity address = new AddressEntity();
-        address.setRole(Role.STUDENT);
-        address.setCourse(3);
-        address.setDepartment(DepartmentName.KFA);
-        address.setGroup(1.3f);
+        AddressEntity address = new AddressEntity(null, Role.STUDENT, new CourseEntity(null, CourseNumber.COURSE_3), null, null, null);
+        //address.setRole(Role.STUDENT);
+        //address.setCourse(3);
 
-        NewsletterEntity newsletter = new NewsletterEntity();
-        newsletter.setDate(OffsetDateTime.now().plusSeconds(30));
-        newsletter.setText("This is the newsletter text.");
-        newsletter.setSubject("Newsletter Subject");
-        newsletter.setSent(false);
-        newsletter.setStatus(Status.NOTSENT);
+        GroupEntity group = new GroupEntity(null, GroupNumber.GROUP_1_3, address, null, null);
+        //group.setGroupValue(1.3f);
+        //group.setAddress(address);
+        //groupRepository.save(group);
 
+        List<GroupEntity> groups = new ArrayList<>();
+        groups.add(group);
+
+        GroupEntity group1 = new GroupEntity(GroupNumber.GROUP_3_3);
+        //groupRepository.save(group1);
+        AddressGroupEntity addressGroup = new AddressGroupEntity(null, address, group1);
+        //addressGroup.setAddress(address);
+        //addressGroup.setGroup(group1);
+
+        List<AddressGroupEntity> addGroups = new ArrayList<>();
+        addGroups.add(addressGroup);
+        address.setGroups(addGroups);
+
+        DepartmentEntity department = new DepartmentEntity(DepartmentName.KFA);
+        //departmentRepository.save(department);
+        AddressDepartmentEntity addressDepartment = new AddressDepartmentEntity(null, address, department );
+        //addressDepartment.setAddress(address);
+        //addressDepartment.setDepartment(department);
+
+        List<AddressDepartmentEntity> departments = new ArrayList<>();
+        departments.add(addressDepartment);
+
+        address.setDepartments(departments);
+
+        GroupEntity group11 = new GroupEntity(GroupNumber.GROUP_1_3);
+        //groupRepository.save(group11);
+        //address.setGroupStudent(Collections.singletonList(group11));
+
+        NewsletterEntity newsletter = new NewsletterEntity(null, OffsetDateTime.now().plusSeconds(30),
+                "This is the newsletter text.", "Newsletter Subject",
+                null, false, Status.NOTSENT );
+        //newsletter.setDate(OffsetDateTime.now().plusSeconds(30));
+        //newsletter.setText("This is the newsletter text.");
+        //newsletter.setSubject("Newsletter Subject");
+        //newsletter.setSent(false);
+        //newsletter.setStatus(Status.NOTSENT);
 
         address.setNewsletter(newsletter);
-        addressRepository.save(address);
 
+        newsletterRepository.save(newsletter);
+
+        //addressRepository.save(address);
+    }
+
+    private void initialAdmin(){
+        ///////    ADMIN без связи со студентом, логично //////
         UserEntity admin = new UserEntity(
                 "Admin",
                 Role.ADMIN,
@@ -61,16 +533,17 @@ public class InitializerService {
                 "myworkemail033@mail.ru"
         );
         userRepository.save(admin);
-        nlRepository.save(newsletter);
+    }
 
+    private  void initialStudentWithUserRelation(){
         //сохранение студента со связью с юзером
-
         StudentEntity student = new StudentEntity(
+                null,
                 "student",
-                3.3f,
+                new GroupEntity(GroupNumber.GROUP_3_3),
                 "+890000001",
-                4,
-                DepartmentName.KUCP,
+                3,
+                new DepartmentEntity(DepartmentName.KUCP),
                 null
         );
 
@@ -86,445 +559,9 @@ public class InitializerService {
 
         student.setUser(studentU);
         studentRepository.save(student);
+    }
 
-        //////////////////   STUDENTы со связью с USERами  ///////////////////
-
-        // заполнение с учетом схемы: На 1 курсе: 1.1, 1.2, 1.3, 2.1, 3.1, 3.2,      2-3 курс: kfa: 1.1, 1.2, 1.3,  kma: 2.1, kucp: 3.1, 3.2
-        for (long j = 0L; j <= 5; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    FIO[(int) (j % FIO.length)],
-                    1.1f,
-                    "+89" + (100 - j),
-                    1,
-                    null,
-                    null
-            );
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }  // 1 1.1
-        for (long j = 6L; j <= 10; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.2f,
-                    "+89" + (100 - j),
-                    1,
-                    null,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        } // 1 1.2
-        for (long j = 11L; j <= 15; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.3f,
-                    "+89" + (100 - j),
-                    1,
-                    null,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 1 1.3
-        for (long j = 16L; j <= 20; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    2.1f,
-                    "+89" + (100 - j),
-                    1,
-                    null,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 1 2.1
-        for (long j = 21L; j <= 25; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    3.1f,
-                    "+89" + (100 - j),
-                    1,
-                    null,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 1 3.1
-        for (long j = 26L; j <= 30; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    3.2f,
-                    "+89" + (100 - j),
-                    1,
-                    null,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 1 3.2
-
-        for (long j = 31L; j <= 35; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.1f,
-                    "+89" + (100 - j),
-                    2,
-                    DepartmentName.KFA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 2 1.1
-        for (long j = 36L; j <= 40; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.2f,
-                    "+89" + (100 - j),
-                    2,
-                    DepartmentName.KFA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 2 1.2
-        for (long j = 41L; j <= 45; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.3f,
-                    "+89" + (100 - j),
-                    2,
-                    DepartmentName.KFA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 2 1.3
-        for (long j = 46L; j <= 50; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    2.1f,
-                    "+89" + (100 - j),
-                    2,
-                    DepartmentName.KMA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 2 2.1
-        for (long j = 51L; j <= 55; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    3.1f,
-                    "+89" + (100 - j),
-                    2,
-                    DepartmentName.KUCP,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 2 3.1
-        for (long j = 56L; j <= 60; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    3.2f,
-                    "+89" + (100 - j),
-                    2,
-                    DepartmentName.KUCP,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 2 3.2
-
-        for (long j = 61L; j <= 65; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.1f,
-                    "+89" + (100 - j),
-                    3,
-                    DepartmentName.KFA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 3 1.1
-        for (long j = 66L; j <= 70; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.2f,
-                    "+89" + (100 - j),
-                    3,
-                    DepartmentName.KFA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 3 1.2
-        for (long j = 71L; j <= 75; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    1.3f,
-                    "+89" + (100 - j),
-                    3,
-                    DepartmentName.KFA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 3 1.3
-        for (long j = 76L; j <= 80; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    2.1f,
-                    "+89" + (100 - j),
-                    3,
-                    DepartmentName.KMA,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 3 2.1
-        for (long j = 81L; j <= 85; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    3.1f,
-                    "+89" + (100 - j),
-                    3,
-                    DepartmentName.KUCP,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 3 3.1
-        for (long j = 86L; j <= 90; j++) {
-            StudentEntity student0 = new StudentEntity(
-                    null,
-                    FIO[(int) (j % FIO.length)],
-                    3.2f,
-                    "+89" + (100 - j),
-                    3,
-                    DepartmentName.KUCP,
-                    null
-            );
-            studentRepository.save(student0);
-            UserEntity user0 = new UserEntity(
-                    "student " + j,
-                    Role.STUDENT,
-                    new PasswordEntity("1234"),
-                    true,
-                    "myworkemail033@mail.ru",
-                    student0
-            );
-            userRepository.save(user0);
-
-            student.setUser(user0);
-            studentRepository.save(student0);
-        }// 3 3.2
-
-        /////////////////    NEWSLETTERы    /////////////////
-
+    private void initialNewsletters(){
 
         OffsetDateTime[] dates = new OffsetDateTime[110];
 
@@ -533,10 +570,23 @@ public class InitializerService {
             dates[i] = currentTime.plusSeconds(30 * i);
         }
 
-        AddressEntity add = new AddressEntity(null, Role.STUDENT, 2, DepartmentName.KFA, 1.1f, null);
-        AddressEntity add0 = new AddressEntity(null, Role.STUDENT, 2, DepartmentName.KMA, 2.1f, null);
-        List<AddressEntity> addList = Arrays.asList(add, add0);
+        DepartmentEntity department2 = new DepartmentEntity(DepartmentName.KFA);
+        departmentRepository.save(department2);
 
+        DepartmentEntity department3 = new DepartmentEntity(DepartmentName.KFA);
+        departmentRepository.save(department3);
+
+        AddressEntity add = new AddressEntity(null, Role.STUDENT, new CourseEntity(null, CourseNumber.COURSE_2), null, null, new ArrayList<>());
+        AddressEntity add0 = new AddressEntity(null, Role.STUDENT,  new CourseEntity(null, CourseNumber.COURSE_2), null, null, new ArrayList<>());
+
+        AddressDepartmentEntity addressDepartment1 = new AddressDepartmentEntity(null, add, department2);
+        AddressDepartmentEntity addressDepartment2 = new AddressDepartmentEntity(null, add0, department3);
+
+        add.getDepartments().add(addressDepartment1);
+        add0.getDepartments().add(addressDepartment2);
+
+        department2.getAddresses().add(addressDepartment1.getAddress());
+        department3.getAddresses().add(addressDepartment2.getAddress());
 
         NewsletterEntity newsletterTest = new NewsletterEntity(
                 null,
@@ -545,17 +595,21 @@ public class InitializerService {
                 "Proverka subject",
                 null,//addList,
                 false,
-                Status.NOTSENT);
+                Status.NOTSENT
+        );
+
+        List<AddressEntity> newsletterAddresses = new ArrayList<>();
+        newsletterAddresses.add(add);
+        newsletterAddresses.add(add0);
+        newsletterTest.setAddresses(newsletterAddresses);
 
         add.setNewsletter(newsletterTest);
         add0.setNewsletter(newsletterTest);
-        addressRepository.save(add);
-        addressRepository.save(add0);
 
-        nlRepository.save(newsletterTest);
+        newsletterRepository.save(newsletterTest);
 
         for (long i = 0L; i <= 50; i++) {
-            nlRepository.save(new NewsletterEntity(
+            newsletterRepository.save(new NewsletterEntity(
                     null,
                     dates[(int) i],
                     "Proverka" + i,
@@ -567,7 +621,7 @@ public class InitializerService {
         }
 
         for (long i = 51L; i <= 70; i++) {
-            nlRepository.save(new NewsletterEntity(
+            newsletterRepository.save(new NewsletterEntity(
                     null,
                     dates[(int) i],
                     "Proverka" + i,
@@ -578,7 +632,7 @@ public class InitializerService {
             );
         }
         for (long i = 71L; i <= 85; i++) {
-            nlRepository.save(new NewsletterEntity(
+            newsletterRepository.save(new NewsletterEntity(
                     null,
                     dates[(int) i],
                     "Proverka" + i,
@@ -589,16 +643,30 @@ public class InitializerService {
             );
         }
         for (long i = 86L; i <= 100; i++) {
-            nlRepository.save(new NewsletterEntity(
+            newsletterRepository.save(new NewsletterEntity(
                     null,
                     dates[(int) i],
                     "Proverka" + i,
                     "Proverka subject" + i,
                     null,
-                    false,
-                    Status.NOTSENT)
+                    true,
+                    Status.SUCCESSFULLY)
             );
         }
+    }
+
+    @Transactional
+    public void initial() {
+
+        initialStudent();
+
+        initialNewsletterWithAddress();
+
+        initialAdmin();
+
+        initialStudentWithUserRelation();
+
+        initialNewsletters();
 
         log.info("DB initialization completed");
     }

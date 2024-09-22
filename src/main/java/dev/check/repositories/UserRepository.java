@@ -27,9 +27,9 @@ public interface UserRepository extends CrudRepository<UserEntity, Long> {
             "JOIN students s ON u.student_id = s.id " +
             "WHERE ((s.department_name IS NULL AND :department IS NULL) OR " +
             "(s.department_name = :department)) " +
-            "AND s.course = :course " +
-            "AND s.group_of_students = :group_of_student")
-    public List<String> getNlForSent(@Param("course") Integer course, @Param("department") String department,
-                              @Param("group_of_student") Float group);
+            "AND (CAST s.course AS TEXT) = :course " +
+            "AND (CAST s.group_of_students AS TEXT) = :group_of_student")
+    public List<String> getNewsletterForSent(@Param("course") String course, @Param("department") String department,
+                              @Param("group_of_student") String group);
 
 }

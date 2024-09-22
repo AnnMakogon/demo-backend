@@ -1,7 +1,7 @@
 package dev.check.manager.SimpleSent;
 
+import dev.check.dto.Newsletter;
 import dev.check.entity.EnumEntity.Status;
-import dev.check.entity.NewsletterEntity;
 import dev.check.service.NewsletterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class SentExecutor {
     private NewsletterService newsletterService;
 
     @Async
-    public void schedulerSendMessage(NewsletterEntity newsletter, String email) throws MessagingException {
+    public void schedulerSendMessage(Newsletter newsletter, String email) throws MessagingException {
 
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

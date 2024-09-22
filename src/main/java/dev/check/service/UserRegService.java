@@ -1,6 +1,6 @@
 package dev.check.service;
 
-import dev.check.DTO.StudentRegistr;
+import dev.check.dto.StudentRegistr;
 import dev.check.entity.PasswordEntity;
 import dev.check.entity.StudentEntity;
 import dev.check.entity.UserEntity;
@@ -38,6 +38,8 @@ public class UserRegService {
 
         return studentRegistr;
     }
+
+
 
 
 }

@@ -19,12 +19,9 @@ public class CheckApplication  {
         CheckApplication.initiator = initiator;
     }
 
-    //todo рассмотреть вариант использования миграции (liquibase)
     public static void main(String[] args) throws MessagingException {
         ApplicationContext context = SpringApplication.run(CheckApplication.class, args);
         initiator.initial();
-        //SentManager sentManager = context.getBean(SentManager.class);
-        //sentManager.schedulerSent();// ЗАКОMМЕНТИЛА ЧТОБЫ НЕ ОТПРАВЛЯЛО ПИСЬМА
 
         SentManagerOnTime scheduler = context.getBean(SentManagerOnTime.class);
         scheduler.scheduleNewsletter();

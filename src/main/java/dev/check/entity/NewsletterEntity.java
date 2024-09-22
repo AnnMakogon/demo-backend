@@ -1,14 +1,14 @@
 package dev.check.entity;
 
 import dev.check.entity.EnumEntity.Status;
-
-import javax.persistence.*;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
+import javax.persistence.*;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +19,8 @@ import java.util.List;
 @Setter
 @Entity
 
-@Table(name = "Newsletters")
+@Table(name = "newsletters")
 @SequenceGenerator(name = "newsletter_seq", sequenceName = "newsletter_seq", allocationSize = 1)
-// name - это название генератора для проекта, а sequenceName - для бд
 public class NewsletterEntity {
 
     @Id
@@ -33,8 +32,8 @@ public class NewsletterEntity {
     private String text;
     private String subject;
 
-    //todo lazy запрос через fetch lazy сущности
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "newsletter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "newsletter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     private List<AddressEntity> addresses = new ArrayList<>();
 
     private Boolean sent;

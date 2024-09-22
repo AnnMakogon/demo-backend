@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<migration>
+    <changeSet id="1" author="Ann">
+        <createTable tableName="students">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+                <generatedValue class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                    <parameters>
+                        <parameter name="sequence_name" value="user_seq"/>
+                    </parameters>
+                </generatedValue>
+            </column>
+            <column name="email" type="varchar(255)"/>
+            <column name="enable" type="boolean"/>
+            <column name="role" type="varchar(255)"/>
+            <column name="username" type="varchar(255)"/>
+            <column name="password_id" type="bigint">
+                <constraints foreignKeyName="fk_users_passwords" references="passwords(id)"/>
+            </column>
+            <column name="student_id" type="bigint">
+                <constraints foreignKeyName="fk_users_students" references="students(id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+</migration>

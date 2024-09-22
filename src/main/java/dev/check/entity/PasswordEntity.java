@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Passwords")
+@Table(name = "passwords")
 @Getter
 @Setter
 @NoArgsConstructor

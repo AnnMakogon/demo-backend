@@ -1,7 +1,7 @@
 package dev.check.service;
 
-import dev.check.DTO.StudentFullTable;
-import dev.check.DTO.StudentUpdate;
+import dev.check.dto.StudentFullTable;
+import dev.check.dto.StudentUpdate;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.StudentEntity;
 import dev.check.entity.UserEntity;
@@ -92,7 +92,7 @@ public class StudentService {
     }
 
     private Page<StudentFullTable> mappToPage(Page<StudentEntity> students) {
-        List<StudentFullTable> newsletterDTOs = studentDtoMapper.studentEntityListToStudentDtoFull(students.getContent());// nlMapper.newsletterEntityListToNewsletterList(newsletters.getContent());
+        List<StudentFullTable> newsletterDTOs = studentDtoMapper.studentEntityListToStudentDtoFull(students.getContent());
         return new PageImpl<>(newsletterDTOs, students.getPageable(), students.getTotalElements());
     }
 

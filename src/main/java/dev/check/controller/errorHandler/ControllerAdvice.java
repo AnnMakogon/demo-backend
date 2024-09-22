@@ -10,15 +10,20 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 @Slf4j
-        //todo проверь, как отрабатывает 500 (не NoSuch
 @org.springframework.web.bind.annotation.ControllerAdvice(annotations = FindError500.class)
 public class ControllerAdvice {
 
-    // измени название, засунь в другое место, не в контроллеры
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleException(NoSuchElementException e) {
         String message = String.format("%s %s", LocalDateTime.now(), e.getMessage());
         log.info("перехват исключения на NOT_FOUND");
         return new ResponseEntity<String>(message, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGenericException(Exception e) {
+        String message = String.format("%s %s", LocalDateTime.now(), e.getMessage());
+        log.error("Внутренняя ошибка сервера: ", e);
+        return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

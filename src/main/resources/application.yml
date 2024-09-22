@@ -3,6 +3,12 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQL9Dialect
+        format_sql: true
+        #use_sql_comments: true  //логирование
+        #show_sql: true
+        #type: trace
+        hdm2ddl.auto: update
+        jdbc.use_get_generated_keys: true
     hibernate:
       ddl-auto: create
   datasource:
@@ -15,7 +21,7 @@ spring:
   config:
     import: "classpath:email.yml"
   #liquibase:
-    #change-log: classpath:liquibase/changelog.yml
+    #change-log: classpath:liquibase/changelog.xml
 
 websocket:
   origins: 'http://localhost:4200'
