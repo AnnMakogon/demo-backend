@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-address-table" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="addresses"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE addresses (
+                id BIGINT PRIMARY KEY NOT NULL,
+                role VARCHAR(255),
+                newsletter_id BIGINT,
+                CONSTRAINT fk_addresses_newsletters FOREIGN KEY (newsletter_id) REFERENCES newsletters(id)
+            );
+        </sql>
+    </changeSet>
+        <!--<createTable tableName="addresses">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="role" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="course_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="newsletter_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="addresses"
+                                 baseColumnNames="course_id"
+                                 referencedTableName="courses"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_addresses_courses"/>
+
+        <addForeignKeyConstraint baseTableName="addresses"
+                                 baseColumnNames="newsletter_id"
+                                 referencedTableName="newsletters"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_addresses_newsletters"/>-->
+
+    <changeSet id="create-view-addresses" author="Ann">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <viewExists viewName="address_view"/>
+            </not>
+        </preConditions>
+        <createView viewName="address_view">
+            SELECT a.id AS address_id,
+            a.role AS address_role,
+            c.id AS course_id,
+            n.id AS newsletter_id
+            FROM addresses a
+            LEFT JOIN courses c ON a.course_id = c.id
+            LEFT JOIN newsletters n ON a.newsletter_id = n.id
+        </createView>
+    </changeSet>
+</databaseChangeLog>

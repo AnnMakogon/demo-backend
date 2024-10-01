@@ -32,7 +32,7 @@ public class StudentController {
 
     @GetMapping(value = "students", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<StudentFullTable> getStudentsPagSortFilter(@ModelAttribute ParamForGet request) {
-        return studentService.getStudents(request.getFilter(), ManagerUtils.createPageable(request.getPage(), request.getSize(), request.getColumn(), request.getDirection()));
+        return studentService.getStudents(request);
     }
 
 }

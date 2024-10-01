@@ -24,6 +24,6 @@ public class CheckApplication  {
         initiator.initial();
 
         SentManagerOnTime scheduler = context.getBean(SentManagerOnTime.class);
-        scheduler.scheduleNewsletter();
+        scheduler.getNewslettersSetStatus();
     }
 }

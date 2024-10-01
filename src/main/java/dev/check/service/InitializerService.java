@@ -474,7 +474,7 @@ public class InitializerService {
         //address.setRole(Role.STUDENT);
         //address.setCourse(3);
 
-        GroupEntity group = new GroupEntity(null, GroupNumber.GROUP_1_3, address, null, null);
+        GroupEntity group = new GroupEntity(null, GroupNumber.GROUP_1_3, null, Collections.singletonList(address));
         //group.setGroupValue(1.3f);
         //group.setAddress(address);
         //groupRepository.save(group);

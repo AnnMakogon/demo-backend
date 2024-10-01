@@ -30,13 +30,14 @@ public class SentExecutorOnTime {
     @Autowired
     private NewsletterService newsletterService;
 
+    //todo добавить валидацию на сохраняемый email , не позволять сохранять невалидные данные, , убрать дефолтный адрес
     @Value("${sentManagers.defaultAddress}")
     private String defaultAddress;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 
     //подготовка, парсинг для отправки
-    public void scheduleNewsletterSend(NewsletterEntity newsletter) {
+    public void preparationForSent(NewsletterEntity newsletter) {
         OffsetDateTime sendTime = newsletter.getDate();
         long initialDelay = Duration.between(OffsetDateTime.now(), sendTime).toMillis() + 25L;
 

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-address-department-table" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="addresses_departments"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE addresses_departments (
+                address_id BIGINT NOT NULL,
+                department_id BIGINT NOT NULL,
+                PRIMARY KEY (address_id, department_id),
+                FOREIGN KEY (address_id) REFERENCES addresses(id),
+                FOREIGN KEY (department_id) REFERENCES departments(id)
+            );
+        </sql>
+        <!--<createTable tableName="address_department">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="address_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+            <column name="department_id" type="bigint">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-foreign-key-to-addresses" author="Ann">
+        <addForeignKeyConstraint baseTableName="address_department"
+                                 baseColumnNames="address_id"
+                                 referencedTableName="addresses"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_addressdep_addresses"/>
+    </changeSet>
+
+    <changeSet id="add-foreign-key-to-departments" author="Ann">
+        <addForeignKeyConstraint baseTableName="address_department"
+                                 baseColumnNames="department_id"
+                                 referencedTableName="departments"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_addressdep_departments"/>-->
+    </changeSet>
+
+    <changeSet id="create-address-department-view" author="Ann">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <viewExists viewName="address_department_view"/>
+            </not>
+        </preConditions>
+        <createView viewName="address_department_view">
+            SELECT ad.id AS address_department_id,
+            a.id AS address_id,
+            a.role AS address_role,
+            a.newsletter_id AS newsletter_id,
+            d.department_name AS department_name
+            FROM address_department ad
+            LEFT JOIN addresses a ON ad.address_id = a.id
+            LEFT JOIN departments d ON ad.department_id = d.id
+        </createView>
+    </changeSet>
+
+</databaseChangeLog>

@@ -27,12 +27,12 @@ public class NewsletterEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "newsletter_seq")
     private Long id;
 
-    @Column(name = "date", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime date;
     private String text;
     private String subject;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "newsletter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "newsletter", cascade = CascadeType.ALL, orphanRemoval = true)
     @Fetch(FetchMode.SUBSELECT)
     private List<AddressEntity> addresses = new ArrayList<>();
 

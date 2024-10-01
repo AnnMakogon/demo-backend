@@ -4,12 +4,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.check.dto.Address;
 import dev.check.dto.Newsletter;
+import dev.check.dto.ParamForGet;
 import dev.check.dto.StudentRegistr;
 import dev.check.entity.AddressEntity;
 import dev.check.entity.Auxiliary.AddressGroupEntity;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;
+import dev.check.manager.ManagerUtils;
 import dev.check.manager.SentOnTime.SentManagerOnTime;
 import dev.check.mapper.NewsletterMapper;
 import dev.check.repositories.*;
@@ -55,15 +57,6 @@ public class NewsletterService {
     private NewsletterMapper newsletterMapper;
 
     @Autowired
-    private AddressRepository addressRepository;
-
-    @Autowired
-    private GroupRepository groupRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
     private AddressDepartmentRepository addressDepartmentRepository;
 
     @Autowired
@@ -85,7 +78,7 @@ public class NewsletterService {
 
     //это для подтверждения регистрации
     @Transactional
-    public void sendSimpleMessage(StudentRegistr newStudent) {
+    public void sendRegistrMessage(StudentRegistr newStudent) {
         if (userRepository.findUserByName(newStudent.getFio())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "username already exist");
         }
@@ -118,16 +111,16 @@ public class NewsletterService {
 
     //создание
     @Transactional
-    public List<Long> createNewsletter(Newsletter newsletter0) {
-        newsletter0.setStatus("INPROCESSING");
+    public List<Long> createNewsletter(Newsletter newsletter) {
+        newsletter.setStatus("INPROCESSING");
         List<Long> idList = new ArrayList<>();
-        List<NewsletterEntity> newsletters = mapToNewsletters(newsletter0);
-        newsletters.forEach((NewsletterEntity newsletter) -> {
-            newsletter.setStatus(Status.NOTSENT);
-            newsletter.setDate(newsletter.getDate().minusHours(3));
-            newsletterRepository.save(newsletter);  //первичная запись в бд со статусом "в очереди"
-            idList.add(newsletter.getId());
-            sentManagerOnTime.checkQueue(newsletter);
+        List<NewsletterEntity> newsletters = mapToNewsletters(newsletter);
+        newsletters.forEach((NewsletterEntity newsletter0) -> {
+            newsletter0.setStatus(Status.NOTSENT);
+            newsletter0.setDate(newsletter0.getDate().minusHours(3));
+            newsletterRepository.save(newsletter0);  //первичная запись в бд со статусом "в очереди"
+            idList.add(newsletter0.getId());
+            sentManagerOnTime.checkQueue(newsletter0);
         });
         return idList;
 
@@ -186,12 +179,12 @@ public class NewsletterService {
     }
 
     @Transactional
-    public Newsletter changeNewsletter(Newsletter newsletterDto) {
-        if (newsletterDto.getId() == null) {
+    public Newsletter changeNewsletter(Newsletter newsletter) {
+        if (newsletter.getId() == null) {
             throw new RuntimeException("id of changing student cannot be null");
         }
-        NewsletterEntity newsletterEntity = newsletterRepository.findById(newsletterDto.getId()).get();
-        NewsletterEntity saveNewsletter = newsletterMapper.newsletterDtoToNewsletter(newsletterDto);
+        NewsletterEntity newsletterEntity = newsletterRepository.findById(newsletter.getId()).get();
+        NewsletterEntity saveNewsletter = newsletterMapper.newsletterDtoToNewsletter(newsletter);
 
         if (newsletterEntity.getAddresses().isEmpty()) {
             newsletterEntity.getAddresses().clear();
@@ -200,7 +193,7 @@ public class NewsletterService {
         saveNewsletter.setDate(saveNewsletter.getDate().minusHours(3));
         newsletterRepository.save(saveNewsletter);
         sentManagerOnTime.checkQueue(saveNewsletter);
-        return newsletterDto;
+        return newsletter;
     }
 
     @Transactional
@@ -217,19 +210,20 @@ public class NewsletterService {
         sentManagerOnTime.checkQueue(changingNewsletter);
         return newsletterDto;
     }
-
     @Transactional
-    public Page<Newsletter> getNewsletter(String filter, Pageable pageable, boolean showflag) {
+    public Page<Newsletter> getNewsletter(ParamForGet request) {
         Page<NewsletterEntity> newsletters;
-        if (showflag) {   // если передалось тру - показываем только непрочитанные
-            newsletters = newsletterRepository.getUnreadNewsletter(filter, pageable);
+        Pageable pageable = ManagerUtils.createPageable(
+                request.getPage(), request.getSize(), request.getColumn(), request.getDirection());
+        if (request.isShowFlag()) {   // если передалось тру - показываем только непрочитанные
+            newsletters = newsletterRepository.getNotSentNewsletter(request.getFilter(), pageable);
         } else {
-            newsletters = newsletterRepository.getNewsletter(filter, pageable);
+            newsletters = newsletterRepository.getNewsletter(request.getFilter(), pageable);
         }
-        return mappToPage(newsletters);
+        return mapDtoForPage(newsletters);
     }
 
-    private Page<Newsletter> mappToPage(Page<NewsletterEntity> newsletters) {
+    private Page<Newsletter> mapDtoForPage(Page<NewsletterEntity> newsletters) {
         List<Newsletter> newsletterDTOs = newsletterMapper.newsletterEntityListToNewsletterList(newsletters.getContent());
         return new PageImpl<>(newsletterDTOs, newsletters.getPageable(), newsletters.getTotalElements());
     }
@@ -262,18 +256,6 @@ public class NewsletterService {
     public NewsletterEntity findById(Long id) {
         return newsletterRepository.findById(id).get();
     }
-
-    /*@Transactional(readOnly = true)
-    public NewsletterEntity findNewsletterWithAddressesById(Long id){
-        NewsletterEntity newsletter = newsletterRepository.findById(id).get();//.findNewsletterWithAddressesById(id);
-        List<AddressEntity> addresses = addressRepository.findAllById(Collections.singleton(id));
-        addresses.forEach((address -> {
-            address.setCourse(courseRepository.findById(id).get());
-        }) );
-        newsletter.setAddresses(addresses);
-        return newsletter;
-
-    }*/
 
     @Transactional(readOnly = true)
     public NewsletterEntity findNewsletterWithAddressesById(Long newsletterId) {

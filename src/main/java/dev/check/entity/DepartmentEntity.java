@@ -27,10 +27,10 @@ public class DepartmentEntity {
     @Enumerated(EnumType.STRING)
     private DepartmentName departmentName;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentEntity> students;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "departments", cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "departments", cascade = CascadeType.ALL)
     private List<AddressEntity> addresses;
 
     public DepartmentEntity(DepartmentName dep){

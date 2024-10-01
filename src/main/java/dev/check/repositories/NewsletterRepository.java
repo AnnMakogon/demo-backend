@@ -25,7 +25,7 @@ public interface NewsletterRepository extends JpaRepository<NewsletterEntity, Lo
             " LEFT JOIN addresses a ON n.id = a.newsletter_id " +
             " WHERE (CAST(n.id AS TEXT) LIKE %:substring% OR text LIKE %:substring% OR " +
             " subject LIKE %:substring%) AND sent = false")
-    public Page<NewsletterEntity> getUnreadNewsletter(@Param("substring") String substring, Pageable page);
+    public Page<NewsletterEntity> getNotSentNewsletter(@Param("substring") String substring, Pageable page);
 
     @Query(nativeQuery = true, value = "SELECT n.*, a.* " +
             " FROM newsletters n " +

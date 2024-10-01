@@ -26,9 +26,9 @@ public class GroupEntity {
     @Enumerated(EnumType.STRING)
     private GroupNumber groupValue;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    /*@ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
-    private AddressEntity address;
+    private AddressEntity address;*/
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentEntity> students;

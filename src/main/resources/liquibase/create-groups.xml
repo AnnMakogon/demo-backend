@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-groups-table" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="groups"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE groups (
+                id BIGINT PRIMARY KEY NOT NULL,
+                group_value VARCHAR(255)
+            );
+        </sql>
+    </changeSet>
+    <!--<changeSet id="add-foreign-key-to-address" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_groups_addresses"/>
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE groups
+            ADD CONSTRAINT fk_groups_addresses FOREIGN KEY (address_id) REFERENCE addresses(id)
+        </sql>
+    </changeSet>
+    <changeSet id="add-foreign-key-to-students" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_groups_students"/>
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE groups
+            ADD CONSTRAINT fk_groups_students FOREIGN KEY (student_id) REFERENCE students(id)
+        </sql>
+    </changeSet>-->
+    <!--<createTable tableName="groups">
+        <column name="id" type="bigint">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="group_value" type="varchar(255)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="address_id" type="bigint">
+            <constraints nullable="true"/>
+        </column>
+    </createTable>
+</changeSet>
+
+<changeSet id="add-foreign-key-to-address" author="Ann">
+    <addForeignKeyConstraint baseTableName="groups"
+                             baseColumnNames="address_id"
+                             referencedTableName="addresses"
+                             referencedColumnNames="id"
+                             constraintName="fk_groups_addresses"/>
+</changeSet>
+
+<changeSet id="add-foreign-key-to-students" author="Ann">
+    <addForeignKeyConstraint baseTableName="students"
+                             baseColumnNames="group_id"
+                             referencedTableName="groups"
+                             referencedColumnNames="id"
+                             constraintName="fk_groups_students"/>-->
+
+    <changeSet id="create-group-view" author="Ann">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <viewExists viewName="group_view"/>
+            </not>
+        </preConditions>
+        <createView viewName="group_view">
+            SELECT g.id AS group_id,
+            g.group_value AS group_value,
+            a.id AS address_id,
+            a.role AS address_role,
+            c.id AS course_id,
+            n.id AS newsletter_id
+            FROM groups g
+            LEFT JOIN addresses a ON g.address_id = a.id
+            LEFT JOIN courses c ON a.course_id = c.id
+            LEFT JOIN newsletters n ON a.newsletter_id = n.id
+        </createView>
+    </changeSet>
+</databaseChangeLog>

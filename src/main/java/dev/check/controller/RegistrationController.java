@@ -25,7 +25,7 @@ public class RegistrationController {
     // вначале идет сюда, отсюда посылается письмо на почту для подтверждения
     @PostMapping(value = "/api/base/registration", produces = MediaType.APPLICATION_JSON_VALUE)
     public StudentRegistr sendMail(@RequestBody StudentRegistr newStudent) {
-        emailService.sendSimpleMessage(newStudent);
+        emailService.sendRegistrMessage(newStudent);
         return newStudent;
     }
 

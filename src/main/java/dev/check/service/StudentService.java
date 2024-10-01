@@ -1,10 +1,12 @@
 package dev.check.service;
 
+import dev.check.dto.ParamForGet;
 import dev.check.dto.StudentFullTable;
 import dev.check.dto.StudentUpdate;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.StudentEntity;
 import dev.check.entity.UserEntity;
+import dev.check.manager.ManagerUtils;
 import dev.check.mapper.StudentMapper;
 import dev.check.repositories.StudentRepository;
 import dev.check.repositories.UserRepository;
@@ -77,21 +79,23 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
-    //get всех студентов и проверка через contains какая роль у вошедшего человека
     @Transactional
-    public Page<StudentFullTable> getStudents(String substring, Pageable pageable) {
+    public Page<StudentFullTable> getStudents(ParamForGet request) {
+
+        Pageable pageable = ManagerUtils.createPageable(request.getPage(),
+                request.getSize(), request.getColumn(), request.getDirection());
 
         UsernamePasswordAuthenticationToken userData = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         Page<StudentEntity> students;
         if (getRoles(userData)) {
-            students = studentRepository.getStudentsStudent(substring, pageable, userData.getName()); //без телефонов остальных
+            students = studentRepository.getStudentsStudent(request.getFilter(), pageable, userData.getName()); //без телефонов остальных
         } else {
-            students = studentRepository.getStudentsAdmin(substring, pageable); //полностью со всеми данными
+            students = studentRepository.getStudentsAdmin(request.getFilter(), pageable); //полностью со всеми данными
         }
-        return mappToPage(students);
+        return mapDtoForPage(students);
     }
 
-    private Page<StudentFullTable> mappToPage(Page<StudentEntity> students) {
+    private Page<StudentFullTable> mapDtoForPage(Page<StudentEntity> students) {
         List<StudentFullTable> newsletterDTOs = studentDtoMapper.studentEntityListToStudentDtoFull(students.getContent());
         return new PageImpl<>(newsletterDTOs, students.getPageable(), students.getTotalElements());
     }

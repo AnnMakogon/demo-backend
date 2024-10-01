@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-address-group-table" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="addresses_groups"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE addresses_groups (
+                address_id BIGINT NOT NULL,
+                group_id BIGINT NOT NULL,
+                PRIMARY KEY (address_id, group_id),
+                FOREIGN KEY (address_id) REFERENCES addresses(id),
+                FOREIGN KEY (group_id) REFERENCES groups(id)
+            );
+        </sql>
+        <!--<createTable tableName="address_group">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="address_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="group_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-foreign-key-to-addresses" author="Ann">
+        <addForeignKeyConstraint baseTableName="address_group"
+                                 baseColumnNames="address_id"
+                                 referencedTableName="addresses"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_addressgroup_addresses"/>
+    </changeSet>
+
+    <changeSet id="add-foreign-key-to-groups" author="Ann">
+        <addForeignKeyConstraint baseTableName="address_group"
+                                 baseColumnNames="group_id"
+                                 referencedTableName="groups"
+                                 referencedColumnNames="id"
+                                 constraintName="fk_addressgroup_groups"/>-->
+    </changeSet>
+
+    <changeSet id="create-address-group-view" author="Ann">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <viewExists viewName="address_group_view"/>
+            </not>
+        </preConditions>
+        <createView viewName="address_group_view">
+            SELECT ag.id AS address_group_id,
+            a.id AS address_id,
+            a.role AS address_role,
+            g.id AS group_id,
+            g.group_value AS group_name
+            FROM address_group ag
+            LEFT JOIN addresses a ON ag.address_id = a.id
+            LEFT JOIN groups g ON ag.group_id = g.id
+        </createView>
+    </changeSet>
+</databaseChangeLog>

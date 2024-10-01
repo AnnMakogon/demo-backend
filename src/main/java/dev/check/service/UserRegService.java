@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class UserRegService {
 
+    //todo autowired через requiredargsconstructor
     @Autowired
     private StudentMapper studentDtoMapper;
     @Autowired

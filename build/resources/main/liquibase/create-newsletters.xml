@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-newsletters-table" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="newsletters"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE newsletters (
+                id BIGINT PRIMARY KEY NOT NULL,
+                date TIMESTAMP WITH TIME ZONE,
+                text VARCHAR(255),
+                subject VARCHAR(255),
+                sent BOOLEAN,
+                status VARCHAR(255)
+            );
+        </sql>
+    </changeSet>
+
+    <!--<changeSet id="add-foreign-key-to-addresses" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <foreignKeyConstraintExists foreignKeyName="fk_newsletters_addresses"/>
+            </not>
+        </preConditions>
+        <sql>
+            ALTER TABLE addresses
+            ADD CONSTRAINT fk_newsletters_addresses FOREIGN KEY (addresses_id) REFERENCES addresses(id)
+        </sql>
+    </changeSet>
+
+
+    <createTable tableName="newsletters">
+        <column name="id" type="bigint">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="date" type="timestamp with time zone">
+            <constraints nullable="true"/>
+        </column>
+        <column name="text" type="text">
+            <constraints nullable="true"/>
+        </column>
+        <column name="subject" type="varchar(255)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="sent" type="boolean">
+            <constraints nullable="true"/>
+        </column>
+        <column name="status" type="varchar(255)">
+            <constraints nullable="true"/>
+        </column>
+    </createTable>
+</changeSet>
+
+<changeSet id="add-foreign-key-to-addresses" author="Ann" runOnChange="true">
+    <addForeignKeyConstraint baseTableName="addresses"
+                             baseColumnNames="newsletter_id"
+                             referencedTableName="newsletters"
+                             referencedColumnNames="id"
+                             constraintName="fk_newsletters_addresses"/>
+</changeSet>-->
+
+    <changeSet id="create-newsletter-view" author="Ann">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <viewExists viewName="newsletter_view"/>
+            </not>
+        </preConditions>
+        <createView viewName="newsletter_view">
+            SELECT n.id AS newsletter_id,
+            n.date AS newsletter_date,
+            n.text AS newsletter_text,
+            n.subject AS newsletter_subject,
+            n.sent AS newsletter_sent,
+            n.status AS newsletter_status
+            FROM newsletters n
+        </createView>
+    </changeSet>
+</databaseChangeLog>

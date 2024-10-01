@@ -7,6 +7,6 @@ import org.mapstruct.*;
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
-    public Role stringToRole(String role);
+    Role stringToRole(String role);
 
 }

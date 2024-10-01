@@ -25,6 +25,7 @@ public class EmailController {
 
     @PostMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public List<Long> createNewsletter(@RequestBody Newsletter newsletter) throws NewsletterNullError {
+        //todo почитай про валидацию @validated
         log.info("Received newsletter: " + newsletter);
         if (newsletter.getDate() == null || newsletter.getText() == null) {
             throw new NewsletterNullError();
@@ -33,7 +34,7 @@ public class EmailController {
     }
 
     @PutMapping(value = "newsletter", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Newsletter changeNl(@RequestBody Newsletter changingNewsletter) {
+    public Newsletter changeNewsletter(@RequestBody Newsletter changingNewsletter) {
         log.info("Received newsletter: " + changingNewsletter);
         return emailService.changeNewsletter(changingNewsletter);
     }
@@ -50,10 +51,7 @@ public class EmailController {
 
     @GetMapping(value = "newsletter", produces = MediaType.APPLICATION_JSON_VALUE)
     public Page<Newsletter> getNewsletterPagSortFilter(@ModelAttribute ParamForGet request) {
-        return emailService.getNewsletter(request.getFilter(),
-                ManagerUtils.createPageable(
-                request.getPage(), request.getSize(), request.getColumn(), request.getDirection()), request.isShowFlag()
-        );
+        return emailService.getNewsletter(request);
     }
 
 }

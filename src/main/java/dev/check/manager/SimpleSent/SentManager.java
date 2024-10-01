@@ -33,6 +33,7 @@ public class SentManager {
     @Value("${sentManagers.defaultAddress}")
     private String defaultAddress;
 
+    //todo сделай выключение через application
     //сама отправка
     //@Scheduled(fixedRate = 180000) // 3 мин // ЗАКОMМЕНТИЛА ЧТОБЫ НЕ ОТПРАВЛЯЛО ПИСЬМА
     public void schedulerSent() throws MessagingException {

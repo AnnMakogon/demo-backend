@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-students-table" author="Ann" runOnChange="true">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="students"/>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE students (
+                id BIGINT PRIMARY KEY NOT NULL,
+                fio VARCHAR(255),
+                phone_number VARCHAR(255),
+                group_id BIGINT,
+                department_id BIGINT,
+                course_id BIGINT,
+                user_id BIGINT,
+                CONSTRAINT fk_students_departments FOREIGN KEY (department_id) REFERENCES departments(id)),
+                CONSTRAINT fk_students_groups FOREIGN KEY (group_id) REFERENCES groups(id),
+                CONSTRAINT fk_students_course FOREIGN KEY (course_id) REFERENCES courses(id),
+                CONSTRAINT fk_students_users FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+        </sql>
+    </changeSet>
+
+
+    <!--<createTable tableName="students">
+        <column name="id" type="bigint">
+            <constraints primaryKey="true" nullable="false"/>
+        </column>
+        <column name="fio" type="varchar(255)">
+            <constraints nullable="false"/>
+        </column>
+        <column name="phone_number" type="varchar(20)">
+            <constraints nullable="true"/>
+        </column>
+        <column name="group_id" type="bigint">
+            <constraints nullable="true"/>
+        </column>
+        <column name="department_id" type="bigint">
+            <constraints nullable="true"/>
+        </column>
+    </createTable>
+</changeSet>
+
+<changeSet id="add-foreign-key-to-groups" author="Ann">
+    <addForeignKeyConstraint baseTableName="students"
+                             baseColumnNames="group_id"
+                             referencedTableName="groups"
+                             referencedColumnNames="id"
+                             constraintName="fk_students_groups"/>
+</changeSet>
+
+<changeSet id="add-foreign-key-to-departments" author="Ann">
+    <addForeignKeyConstraint baseTableName="students"
+                             baseColumnNames="department_id"
+                             referencedTableName="departments"
+                             referencedColumnNames="id"
+                             constraintName="fk_students_departments"/>
+</changeSet>-->
+
+    <changeSet id="create-student-view" author="Ann">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <viewExists viewName="student_view"/>
+            </not>
+        </preConditions>
+        <createView viewName="student_view">
+            SELECT s.id AS student_id,
+            s.fio AS student_fio,
+            s.phone_number AS student_phone,
+            g.group_value AS group_name,
+            d.department_name AS department_name
+            FROM students s
+            LEFT JOIN groups g ON s.group_id = g.id
+            LEFT JOIN departments d ON s.department_id = d.id
+        </createView>
+    </changeSet>
+</databaseChangeLog>
