@@ -9,6 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@lombok.NonNull
 public class ParamForGet {
     private int page;
     private int size;

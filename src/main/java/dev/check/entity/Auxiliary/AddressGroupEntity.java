@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "address_group")
+@Table(name = "addresses_groups")
 @SequenceGenerator(name = "addGr_seq", sequenceName = "addGr_seq", allocationSize = 1)
 @AllArgsConstructor
 @NoArgsConstructor

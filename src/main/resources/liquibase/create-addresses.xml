@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <changeSet id="create-add_seq" author="Ann" runOnChange="true">
+        <createSequence cacheSize="1" cycle="false" sequenceName="add_seq" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1"  startValue="1"/>
+    </changeSet>
+
     <changeSet id="create-address-table" author="Ann" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -13,7 +17,7 @@
         </preConditions>
         <sql>
             CREATE TABLE addresses (
-                id BIGINT PRIMARY KEY NOT NULL,
+                id BIGINT PRIMARY KEY NOT NULL DEFAULT nextval('add_seq'),
                 role VARCHAR(255),
                 newsletter_id BIGINT,
                 CONSTRAINT fk_addresses_newsletters FOREIGN KEY (newsletter_id) REFERENCES newsletters(id)
@@ -47,7 +51,7 @@
                                  referencedColumnNames="id"
                                  constraintName="fk_addresses_newsletters"/>-->
 
-    <changeSet id="create-view-addresses" author="Ann">
+    <!--<changeSet id="create-view-addresses" author="Ann">
         <preConditions onFail="MARK_RAN">
             <not>
                 <viewExists viewName="address_view"/>
@@ -59,8 +63,7 @@
             c.id AS course_id,
             n.id AS newsletter_id
             FROM addresses a
-            LEFT JOIN courses c ON a.course_id = c.id
-            LEFT JOIN newsletters n ON a.newsletter_id = n.id
+            LEFT JOIN newsletters n ON a.newsletter_id = n.id;
         </createView>
-    </changeSet>
+    </changeSet>-->
 </databaseChangeLog>

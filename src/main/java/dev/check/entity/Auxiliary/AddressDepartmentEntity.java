@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "address_department")
+@Table(name = "addresses_departments")
 @SequenceGenerator(name = "addDep_seq", sequenceName = "addDep_seq", allocationSize = 1)
 @AllArgsConstructor
 @NoArgsConstructor

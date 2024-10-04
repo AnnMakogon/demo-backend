@@ -12,12 +12,14 @@ import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;
 import dev.check.manager.ManagerUtils;
-import dev.check.manager.SentOnTime.SentManagerOnTime;
+import dev.check.manager.SentManagerOnTime;
 import dev.check.mapper.NewsletterMapper;
-import dev.check.repositories.*;
+import dev.check.repositories.AddressDepartmentRepository;
+import dev.check.repositories.AddressGroupRepository;
+import dev.check.repositories.NewsletterRepository;
+import dev.check.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -35,9 +37,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,22 +45,17 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NewsletterService {
 
-    @Autowired
-    private JavaMailSender emailSender;
+    private final JavaMailSender emailSender;
 
-    @Autowired
-    private NewsletterRepository newsletterRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final NewsletterRepository newsletterRepository;
 
-    @Autowired
-    private NewsletterMapper newsletterMapper;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private AddressDepartmentRepository addressDepartmentRepository;
+    private final NewsletterMapper newsletterMapper;
 
-    @Autowired
-    private AddressGroupRepository addressGroupRepository;
+    private final AddressDepartmentRepository addressDepartmentRepository;
+
+    private final AddressGroupRepository addressGroupRepository;
 
     private SentManagerOnTime sentManagerOnTime;
 

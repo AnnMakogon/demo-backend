@@ -1,6 +1,6 @@
 package dev.check.mapper;
 
-import dev.check.dto.StudentFullTable;
+import dev.check.dto.Student;
 import dev.check.dto.StudentRegistr;
 import dev.check.dto.StudentUpdate;
 import dev.check.entity.CourseEntity;
@@ -23,9 +23,9 @@ public interface StudentMapper {
     @Mapping(target = "departmentName", source = "student.department.departmentName")
     @Mapping(target = "group", source = "student.group.groupValue")
     @Mapping(target = "course", source = "student.course.courseNumber")
-    public StudentFullTable studentEntityToStudentFullTable(StudentEntity student);
+    public Student studentEntityToStudent(StudentEntity student);
 
-    public List<StudentFullTable> studentEntityListToStudentDtoFull(List<StudentEntity> studentEntityList);
+    public List<Student> studentEntityListToStudentList(List<StudentEntity> studentEntityList);
     public GroupEntity map(String value);
     public String map(GroupEntity value);
 

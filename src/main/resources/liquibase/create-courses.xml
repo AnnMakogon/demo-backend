@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <changeSet id="create-c_seq" author="Ann" runOnChange="true">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="c_seq" startValue="1"/>
+    </changeSet>
+
     <changeSet id="create-courses-table" author="Ann" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -13,9 +17,19 @@
         </preConditions>
         <sql>
             CREATE TABLE courses (
-                id BIGINT PRIMARY KEY NOT NULL,
+                id BIGINT PRIMARY KEY NOT NULL DEFAULT nextval('c_seq'),
                 course_number VARCHAR(255)
             );
+        </sql>
+    </changeSet>
+
+    <changeSet id="add-address-course_id" author="Ann" runOnChange="true">
+        <sql>
+            ALTER TABLE addresses
+            ADD COLUMN course_id BIGINT UNIQUE;
+
+            ALTER TABLE addresses
+            ADD CONSTRAINT fk_course_address FOREIGN KEY (course_id) REFERENCES courses(id);
         </sql>
     </changeSet>
         <!--<createTable tableName="courses">

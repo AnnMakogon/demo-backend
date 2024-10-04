@@ -6,8 +6,8 @@ import dev.check.entity.AddressEntity;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.mapper.NewsletterMapper;
 import dev.check.service.NewsletterService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
@@ -19,16 +19,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Component
 @Slf4j
 @EnableScheduling
+@RequiredArgsConstructor
 public class SentManager {
 
-    @Autowired
-    private SentExecutor sentExecutor;
+    private final SentExecutor sentExecutor;
 
-    @Autowired
-    private NewsletterService newsletterService;
+    private final NewsletterService newsletterService;
 
-    @Autowired
-    private NewsletterMapper nlMapper;
+    private final NewsletterMapper nlMapper;
 
     @Value("${sentManagers.defaultAddress}")
     private String defaultAddress;

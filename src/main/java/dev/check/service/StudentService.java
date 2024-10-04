@@ -1,7 +1,7 @@
 package dev.check.service;
 
 import dev.check.dto.ParamForGet;
-import dev.check.dto.StudentFullTable;
+import dev.check.dto.Student;
 import dev.check.dto.StudentUpdate;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.StudentEntity;
@@ -10,7 +10,7 @@ import dev.check.manager.ManagerUtils;
 import dev.check.mapper.StudentMapper;
 import dev.check.repositories.StudentRepository;
 import dev.check.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,15 +27,14 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class StudentService {
-    @Autowired
-    private StudentMapper studentDtoMapper;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentMapper studentDtoMapper;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final StudentRepository studentRepository;
+
+    private final UserRepository userRepository;
 
     @Transactional
     public StudentUpdate updateStudent(StudentUpdate studentDto) {
@@ -80,7 +79,7 @@ public class StudentService {
     }
 
     @Transactional
-    public Page<StudentFullTable> getStudents(ParamForGet request) {
+    public Page<Student> getStudents(ParamForGet request) {
 
         Pageable pageable = ManagerUtils.createPageable(request.getPage(),
                 request.getSize(), request.getColumn(), request.getDirection());
@@ -95,8 +94,8 @@ public class StudentService {
         return mapDtoForPage(students);
     }
 
-    private Page<StudentFullTable> mapDtoForPage(Page<StudentEntity> students) {
-        List<StudentFullTable> newsletterDTOs = studentDtoMapper.studentEntityListToStudentDtoFull(students.getContent());
+    private Page<Student> mapDtoForPage(Page<StudentEntity> students) {
+        List<Student> newsletterDTOs = studentDtoMapper.studentEntityListToStudentList(students.getContent());
         return new PageImpl<>(newsletterDTOs, students.getPageable(), students.getTotalElements());
     }
 

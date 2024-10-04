@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,7 +25,7 @@ public class RegistrationController {
 
     // вначале идет сюда, отсюда посылается письмо на почту для подтверждения
     @PostMapping(value = "/api/base/registration", produces = MediaType.APPLICATION_JSON_VALUE)
-    public StudentRegistr sendMail(@RequestBody StudentRegistr newStudent) {
+    public StudentRegistr sendMail(@Validated @RequestBody StudentRegistr newStudent) {
         emailService.sendRegistrMessage(newStudent);
         return newStudent;
     }

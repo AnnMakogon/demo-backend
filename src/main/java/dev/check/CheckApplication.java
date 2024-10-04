@@ -1,6 +1,6 @@
 package dev.check;
 
-import dev.check.manager.SentOnTime.SentManagerOnTime;
+import dev.check.manager.SentManagerOnTime;
 import dev.check.service.InitializerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -21,7 +21,7 @@ public class CheckApplication  {
 
     public static void main(String[] args) throws MessagingException {
         ApplicationContext context = SpringApplication.run(CheckApplication.class, args);
-        initiator.initial();
+        //initiator.initial();
 
         SentManagerOnTime scheduler = context.getBean(SentManagerOnTime.class);
         scheduler.getNewslettersSetStatus();

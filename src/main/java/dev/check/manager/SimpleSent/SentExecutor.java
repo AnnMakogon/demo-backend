@@ -3,8 +3,9 @@ package dev.check.manager.SimpleSent;
 import dev.check.dto.Newsletter;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.service.NewsletterService;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -16,12 +17,12 @@ import java.time.LocalTime;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SentExecutor {
-    @Autowired
-    private JavaMailSender emailSender;
 
-    @Autowired
-    private NewsletterService newsletterService;
+    private final JavaMailSender emailSender;
+
+    private final NewsletterService newsletterService;
 
     @Async
     public void schedulerSendMessage(Newsletter newsletter, String email) throws MessagingException {

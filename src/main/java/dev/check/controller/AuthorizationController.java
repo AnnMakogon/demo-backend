@@ -4,7 +4,6 @@ import dev.check.dto.User;
 import dev.check.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
@@ -24,8 +23,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 public class AuthorizationController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping(value = "/login")
     public User apiLogin(Principal principal) {

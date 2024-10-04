@@ -9,8 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-//todo название непонятное, как будто внутри список или таблица
-public class StudentFullTable {
+public class Student{
 
     private Long id;
     private String fio;

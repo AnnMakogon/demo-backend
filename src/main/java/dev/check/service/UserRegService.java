@@ -8,23 +8,22 @@ import dev.check.mapper.StudentMapper;
 import dev.check.mapper.UserMapper;
 import dev.check.repositories.StudentRepository;
 import dev.check.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
+@RequiredArgsConstructor
 public class UserRegService {
 
-    //todo autowired через requiredargsconstructor
-    @Autowired
-    private StudentMapper studentDtoMapper;
-    @Autowired
-    private UserMapper userMapper;
-    @Autowired
-    private StudentRepository studentRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private final StudentMapper studentDtoMapper;
+
+    private final UserMapper userMapper;
+
+    private final StudentRepository studentRepository;
+
+    private final UserRepository userRepository;
 
     @Transactional
     public StudentRegistr regStudent(StudentRegistr studentRegistr) {
@@ -33,7 +32,6 @@ public class UserRegService {
                 userMapper.stringToRole(studentRegistr.getRole()),
                 new PasswordEntity(studentRegistr.getPasswordId()),
                 studentRegistr.isEnable(), studentRegistr.getEmail());
-        // что такое транзакции, если после сохранения userRepository упадет, какие данные будут в бд, почему?- см в "ВЫУЧИТЬ ДЛЯ ЗАДАЧИ"
         userRepository.save(user);
         studentRepository.save(student);
 

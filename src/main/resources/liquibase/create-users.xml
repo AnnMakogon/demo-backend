@@ -5,24 +5,31 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <changeSet id="create-user_seq" author="Ann" runOnChange="true">
+        <createSequence cacheSize="1" cycle="false" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1" sequenceName="user_seq" startValue="1"/>
+    </changeSet>
+
     <changeSet id="create-users-table" author="Ann" runOnChange="true">
         <preConditions onFail="MARK_RAN">
-            <not>
                 <tableExists tableName="users"/>
-            </not>
         </preConditions>
+        <!--<createSequence sequenceName="public.user_seq" startValue="1" incrementBy="1"/>-->
         <sql>
             CREATE TABLE users (
-                id BIGINT PRIMARY KEY NOT NULL,
+                id BIGINT PRIMARY KEY NOT NULL DEFAULT nextval('user_seq'),
                 username VARCHAR(255),
                 role VARCHAR(255),
                 enable BOOLEAN,
                 email VARCHAR(255),
                 password_id BIGINT UNIQUE,
                 CONSTRAINT fk_users_password FOREIGN KEY (password_id) REFERENCES passwords(id)
+                <!--student_id BIGINT,
+                CONSTRAINT fk_students_users FOREIGN KEY (student_id) REFERENCES students(id)-->
             );
         </sql>
     </changeSet>
+
+
 
 
     <!--<createTable tableName="users">
@@ -64,7 +71,7 @@
                              referencedTableName="students"
                              referencedColumnNames="id"
                              constraintName="fk_users_students"/>
-</changeSet>-->
+</changeSet>
 
     <changeSet id="create-user-view" author="Ann">
         <preConditions onFail="MARK_RAN">
@@ -82,7 +89,7 @@
             s.fio AS student_fio
             FROM users u
             LEFT JOIN passwords p ON u.password_id = p.id
-            LEFT JOIN students s ON u.student_id = s.id
+            LEFT JOIN students s ON u.id = s.user_id
         </createView>
-    </changeSet>
+    </changeSet>-->
 </databaseChangeLog>

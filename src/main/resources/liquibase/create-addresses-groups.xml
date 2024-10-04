@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="create-address-group-table" author="Ann" runOnChange="true">
+    <changeSet id="create-addresses-groups-table" author="Ann" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
                 <tableExists tableName="addresses_groups"/>
@@ -55,7 +55,7 @@
                 <viewExists viewName="address_group_view"/>
             </not>
         </preConditions>
-        <createView viewName="address_group_view">
+        <!--<createView viewName="address_group_view">
             SELECT ag.id AS address_group_id,
             a.id AS address_id,
             a.role AS address_role,
@@ -64,6 +64,6 @@
             FROM address_group ag
             LEFT JOIN addresses a ON ag.address_id = a.id
             LEFT JOIN groups g ON ag.group_id = g.id
-        </createView>
+        </createView>-->
     </changeSet>
 </databaseChangeLog>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!--<changeSet id="delete-all-records" author="Ann" runOnChange="true">
+
+        <sql>
+            DELETE FROM users;
+            DELETE FROM passwords;
+            DELETE FROM students;
+
+            DELETE FROM addresses_groups;
+            DELETE FROM groups;
+
+            DELETE FROM addresses_departments;
+
+            DELETE FROM departments;
+
+            DELETE FROM addresses;
+
+            DELETE FROM addresses_courses;
+            DELETE FROM courses;
+
+            DELETE FROM newsletters;
+
+        </sql>
+    </changeSet>-->
+    <changeSet id="delete-all-records" author="Ann" runOnChange="true">
+        <sql>
+            TRUNCATE TABLE students RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE users RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE departments RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE groups RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE courses RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE addresses_courses RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE addresses_departments RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE addresses_groups RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE newsletters RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE passwords RESTART IDENTITY CASCADE;
+            TRUNCATE TABLE addresses RESTART IDENTITY CASCADE;
+
+            ALTER SEQUENCE student_seq RESTART WITH 1;
+            ALTER SEQUENCE user_seq RESTART WITH 1;
+            ALTER SEQUENCE add_seq RESTART WITH 1;
+            ALTER SEQUENCE c_seq RESTART WITH 1;
+            ALTER SEQUENCE dep_seq RESTART WITH 1;
+            ALTER SEQUENCE group_seq RESTART WITH 1;
+            ALTER SEQUENCE newsletter_seq RESTART WITH 1;
+            ALTER SEQUENCE pas_seq RESTART WITH 1;
+        </sql>
+    </changeSet>
+</databaseChangeLog>

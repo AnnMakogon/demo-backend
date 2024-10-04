@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <changeSet id="create-group_seq" author="Ann" runOnChange="true">
+        <createSequence cacheSize="1" cycle="false" sequenceName="group_seq" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1"  startValue="1"/>
+    </changeSet>
+
     <changeSet id="create-groups-table" author="Ann" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -13,7 +17,7 @@
         </preConditions>
         <sql>
             CREATE TABLE groups (
-                id BIGINT PRIMARY KEY NOT NULL,
+                id BIGINT PRIMARY KEY NOT NULL DEFAULT nextval('group_seq'),
                 group_value VARCHAR(255)
             );
         </sql>
@@ -74,7 +78,7 @@
                 <viewExists viewName="group_view"/>
             </not>
         </preConditions>
-        <createView viewName="group_view">
+        <!--<createView viewName="group_view">
             SELECT g.id AS group_id,
             g.group_value AS group_value,
             a.id AS address_id,
@@ -85,6 +89,6 @@
             LEFT JOIN addresses a ON g.address_id = a.id
             LEFT JOIN courses c ON a.course_id = c.id
             LEFT JOIN newsletters n ON a.newsletter_id = n.id
-        </createView>
+        </createView>-->
     </changeSet>
 </databaseChangeLog>

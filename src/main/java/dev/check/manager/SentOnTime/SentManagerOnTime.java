@@ -1,14 +1,15 @@
 package dev.check.manager.SentOnTime;
 
 import dev.check.dto.Newsletter;
-import dev.check.entity.EnumEntity.Status;
+import dev.check.entity.AddressEntity;
 import dev.check.entity.NewsletterEntity;
 import dev.check.mapper.NewsletterMapper;
 import dev.check.service.NewsletterService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.mail.MessagingException;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -16,44 +17,25 @@ import java.util.concurrent.*;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class SentManagerOnTime {
-    @Autowired
-    private NewsletterService newsletterService;
-
+    private final NewsletterService newsletterService;
+    private final NewsletterMapper newsletterMapper;
+    private final SentExecutorOnTime sentExecutorOnTime;
     private ConcurrentHashMap<Long, ScheduledFuture<?>> scheduledTasksMap = new ConcurrentHashMap<>();
-    @Autowired
-    private SentExecutorOnTime sentExecutorOnTime;
-
-    @Autowired
-    private NewsletterMapper newsletterMapper;
-
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 
-    //получение и установление статуса
-    public void getNewslettersSetStatus(){
-        List<Newsletter> newslettersList = newsletterService.getForSentScheduler(10);
-        newslettersList.forEach( newsletter -> {
-            newsletterService.changeStatus(newsletter.getId(), Status.INPROCESSING);
-        });
+    public void sentOnTimeLetter(){
+        List<Newsletter> newsletters = newsletterService.getForSentScheduler(10);
 
-        throwInLine(newslettersList);
-    }
-
-    //закидывание в очередь
-    private void throwInLine(List<Newsletter> newsletters){
         for (Newsletter newsletter : newsletters) {
             NewsletterEntity newsletterEntity = newsletterMapper.newsletterDtoToNewsletter(newsletter);
 
-            OffsetDateTime sendTime = newsletter.getDate();
-
-            long initialDelay = Duration.between(OffsetDateTime.now(), sendTime).toMillis();
+            long initialDelay = Duration.between(OffsetDateTime.now(), newsletter.getDate()).toMillis(); //время до отправки
 
             if (initialDelay >= 0) {
                 ScheduledFuture<?> future = scheduler.schedule(() -> {
-
-                    log.info("Send newsletter with id: " + newsletter.getId());
-
-                    sentExecutorOnTime.preparationForSent(newsletterEntity);
+                   this.preparationForSent(newsletterEntity);
                 }, initialDelay, TimeUnit.MILLISECONDS);
 
                 scheduledTasksMap.put(newsletter.getId(), future);
@@ -62,45 +44,27 @@ public class SentManagerOnTime {
             }
         }
     }
+    public void preparationForSent(NewsletterEntity newsletter) {
+        long initialDelay = Duration.between(OffsetDateTime.now(), newsletter.getDate()).toMillis() + 25L;
 
-    public void checkQueue(NewsletterEntity newNewsletter){
-        boolean isScheduled = scheduledTasksMap.containsKey(newNewsletter.getId());
-        long newNewsletterTime = Duration.between(OffsetDateTime.now(), newNewsletter.getDate()).toMillis();
-
-        List<Newsletter> newsletters = newsletterService.getForSentScheduler(10);
-
-        if (newsletters.isEmpty()){
-            log.info("No newsletters for schedule");
-            return;
-        }
-
-        long lastScheduledTime = Duration.between(OffsetDateTime.now(), newsletters.get(newsletters.size()).getDate()).toMillis();
-
-        if(isScheduled || newNewsletterTime < lastScheduledTime) {
-            cancelAllScheduledTasks();
-
-            newsletters.forEach(newsletter -> {
-                newsletterService.changeStatus(newsletter.getId(), Status.INPROCESSING);
-            });
-
-            throwInLine(newsletters);
-
-            log.info("Queue has been update");
-        }else{
-            log.info("No need to update of the queue");
-        }
+        Runnable task = () -> {
+            try {
+                NewsletterEntity currentNewsletter = newsletterService.findNewsletterWithAddressesById(newsletter.getId());
+                if (currentNewsletter != null) {
+                    if (!currentNewsletter.getAddresses().isEmpty()) {
+                        for (AddressEntity address : currentNewsletter.getAddresses()) {
+                            List<String> emails = newsletterService.getEmailForSent(address.getCourse().getCourseNumber().getCourse(), address.getDepartments().toString(), address.getGroups());
+                            for (String email : emails) {
+                                sentExecutorOnTime.schedulerSendMessage(currentNewsletter, email);
+                            }
+                        }
+                    }
+                }
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        scheduler.schedule(task, initialDelay, TimeUnit.MILLISECONDS);
     }
 
-    public void checkQueueDelete(Long id){
-        NewsletterEntity newsletter = newsletterService.findById(id);
-
-        checkQueue(newsletter);
-    }
-
-    private void cancelAllScheduledTasks() {
-        for (ScheduledFuture<?> future : scheduledTasksMap.values()) {
-            future.cancel(false);
-        }
-        scheduledTasksMap.clear();
-    }
 }

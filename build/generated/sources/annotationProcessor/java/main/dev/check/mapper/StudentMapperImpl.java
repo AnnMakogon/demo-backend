@@ -1,6 +1,6 @@
 package dev.check.mapper;
 
-import dev.check.dto.StudentFullTable;
+import dev.check.dto.Student;
 import dev.check.dto.StudentRegistr;
 import dev.check.dto.StudentUpdate;
 import dev.check.entity.CourseEntity;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-10-01T11:11:01+0300",
+    date = "2024-10-04T14:19:27+0300",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.6.jar, environment: Java 1.8.0_382 (Amazon.com Inc.)"
 )
 @Component
@@ -58,41 +58,41 @@ public class StudentMapperImpl implements StudentMapper {
     }
 
     @Override
-    public StudentFullTable studentEntityToStudentFullTable(StudentEntity student) {
+    public Student studentEntityToStudent(StudentEntity student) {
         if ( student == null ) {
             return null;
         }
 
-        StudentFullTable studentFullTable = new StudentFullTable();
+        Student student1 = new Student();
 
         DepartmentName departmentName = studentDepartmentDepartmentName( student );
         if ( departmentName != null ) {
-            studentFullTable.setDepartmentName( departmentName.name() );
+            student1.setDepartmentName( departmentName.name() );
         }
         GroupNumber groupValue = studentGroupGroupValue( student );
         if ( groupValue != null ) {
-            studentFullTable.setGroup( groupValue.name() );
+            student1.setGroup( groupValue.name() );
         }
         CourseNumber courseNumber = studentCourseCourseNumber( student );
         if ( courseNumber != null ) {
-            studentFullTable.setCourse( courseNumber.name() );
+            student1.setCourse( courseNumber.name() );
         }
-        studentFullTable.setId( student.getId() );
-        studentFullTable.setFio( student.getFio() );
-        studentFullTable.setPhoneNumber( student.getPhoneNumber() );
+        student1.setId( student.getId() );
+        student1.setFio( student.getFio() );
+        student1.setPhoneNumber( student.getPhoneNumber() );
 
-        return studentFullTable;
+        return student1;
     }
 
     @Override
-    public List<StudentFullTable> studentEntityListToStudentDtoFull(List<StudentEntity> studentEntityList) {
+    public List<Student> studentEntityListToStudentList(List<StudentEntity> studentEntityList) {
         if ( studentEntityList == null ) {
             return null;
         }
 
-        List<StudentFullTable> list = new ArrayList<StudentFullTable>( studentEntityList.size() );
+        List<Student> list = new ArrayList<Student>( studentEntityList.size() );
         for ( StudentEntity studentEntity : studentEntityList ) {
-            list.add( studentEntityToStudentFullTable( studentEntity ) );
+            list.add( studentEntityToStudent( studentEntity ) );
         }
 
         return list;

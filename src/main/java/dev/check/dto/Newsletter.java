@@ -1,9 +1,7 @@
 package dev.check.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.sun.istack.NotNull;
+import lombok.*;
 
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -15,10 +13,11 @@ import java.util.List;
 public class Newsletter {
 
     private Long id;
+    @NotNull
     private OffsetDateTime date;
-    private String text;
-    private String subject;
+    private String text = "";
+    private String subject = "";
     private List<Address> address;
-    private Boolean sent; // отправлено или нет
-    private String status;  // дошло / есть ошибка / принято в обработку / не отправлено
+    private Boolean sent = false; // отправлено или нет
+    private String status = "";  // дошло / есть ошибка / принято в обработку / не отправлено
 }

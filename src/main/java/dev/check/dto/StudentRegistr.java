@@ -1,5 +1,6 @@
 package dev.check.dto;
 
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,8 @@ public class StudentRegistr {
     private String phoneNumber;
     private String passwordId;
     private String role;
-    private boolean enable;
+    private boolean enable = false;
+    @NotNull
     private String email;
     private String departmentName;
     private String course;

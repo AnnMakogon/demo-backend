@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1)
+@SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1/*, schema = "public"*/)
 public class UserEntity {
 
     public UserEntity(String username, Role role, PasswordEntity password, boolean enable, String email) {
@@ -53,7 +53,7 @@ public class UserEntity {
     private String email;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id")
+    @JoinColumn(name = "student_id", foreignKey=@ForeignKey(name = "fk_students_users"))
     private StudentEntity student;
 
 }

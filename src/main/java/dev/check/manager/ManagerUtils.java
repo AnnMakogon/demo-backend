@@ -7,8 +7,6 @@ import org.springframework.stereotype.Controller;
 
 import java.util.Objects;
 
-//todo е нужен, разберись
-//@Controller
 public class ManagerUtils {
     public static Pageable createPageable(int page, int size, String column, String direction) {
 
