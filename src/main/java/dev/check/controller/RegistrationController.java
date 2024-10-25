@@ -1,44 +1,45 @@
 package dev.check.controller;
 
-import dev.check.DTO.StudentRegistrDTO;
-import dev.check.service.EmailService;
+import dev.check.dto.StudentRegistr;
+import dev.check.dto.User;
+import dev.check.entity.UserEntity;
+import dev.check.service.NewsletterService;
 import dev.check.service.UserRegService;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-//@RequestMapping("/api/base")
 @Slf4j
-@NoArgsConstructor
 @Controller
+@RequiredArgsConstructor
 public class RegistrationController {
-    public static final Object lock = new Object();
-    @Getter
-    public static volatile boolean proof = false;
 
-    @Autowired
-    private UserRegService userRegService;
-    @Autowired
-    private EmailService emailService;
+    private final UserRegService userRegService;
 
-    private StudentRegistrDTO regStudent;
+    private final NewsletterService emailService;
 
-
-    @PostMapping(value = "/api/base/registration", produces = MediaType.APPLICATION_JSON_VALUE) // отправка письма только
-    public void sendMail(@RequestBody StudentRegistrDTO newStudent) {
-        regStudent = newStudent;
-        log.info("REGISTRATION");
-        emailService.sendSimpleMessage(newStudent.getEmail(), "Регистрация", "РЕГИСТРАЦИЯ ");
+    // сама регистрация с добавлением юзера и студента с enableEmail = false
+    @PostMapping(value = "/api/base/registration", produces = MediaType.APPLICATION_JSON_VALUE)
+    public StudentRegistr registrStudent(@Validated @RequestBody StudentRegistr newStudent){
+        userRegService.regStudent(newStudent);
+        return newStudent;
     }
 
-    @GetMapping(value = "api/registr", produces = MediaType.APPLICATION_JSON_VALUE) // здесь сама регистрация добавление
-    public StudentRegistrDTO registration(){
-        return userRegService.regStudent(regStudent);
+    // подтверждение по кнопке
+   @PostMapping(value = "/api/base/confirmation", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void sendMail(@Validated @RequestBody User newStudent) { //должно возвращать дто регистрации для фронта
+        emailService.sendRegistrMessage(newStudent);
+    }
+
+    // ссылка из письма ведет на фронт, откуда - сюда, здесь обновление в бд с enableEmail = true
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping(value = "api/registr", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public User registration(@RequestBody Long id) {
+        return userRegService.confirmation(id);
     }
 
 }

@@ -1,31 +1,48 @@
 package dev.check.mapper;
 
-import dev.check.DTO.StudentFullTableDTO;
-import dev.check.DTO.StudentRegistrDTO;
-import dev.check.DTO.StudentTableDTO;
-import dev.check.DTO.StudentUpdateDTO;
-import dev.check.entity.Password;
-import dev.check.entity.Student;
-import dev.check.entity.User;
+import dev.check.dto.Student;
+import dev.check.dto.StudentRegistr;
+import dev.check.dto.StudentUpdate;
+import dev.check.entity.*;
+import dev.check.entity.EnumEntity.Role;
 import org.mapstruct.*;
-import dev.check.entity.Role;
 
 import java.util.List;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface StudentMapper {
+    StudentEntity studentDtoToStudent(StudentUpdate studentDtoUpd);
 
-    public StudentTableDTO studentToStudentDto(Student student);
-    public  List<StudentTableDTO> studentListToStudentDtoList(List<Student> students);
+    @Mapping(target = "department", source = "departmentName")
+    @Mapping(target = "course", source = "course")
+    @Mapping(target = "group", source = "group")
+    StudentEntity studentDtoRegistrToStudent(StudentRegistr studentDtoRegis);
 
-    public  Student studentDtoToStudent(StudentUpdateDTO studentDtoUpd);
-    public List<Student> studentDtoListToStudentList(List<StudentTableDTO> students);
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "departmentName", source = "departmentName")
+    DepartmentEntity mapDepartmentEntity(StudentRegistr studentRegistr);
+    DepartmentEntity mapDep(String value);
 
-    public Student studentDtoAuthToStudent(StudentRegistrDTO studentDtoAuth);
-    public List<Student> studentDtoAuthListToStudentList(List<StudentRegistrDTO> studentDtoAuthList);
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "courseNumber", source = "course")
+    CourseEntity mapCourseEntity(StudentRegistr studentRegistr);
 
-    public StudentFullTableDTO studentToStudentDtoFrontFull (Student student);
-    public  List<StudentFullTableDTO> studentListToStudentDtoFullList(List<Student> students);
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "groupValue", source = "group")
+    GroupEntity mapGroupEntity(StudentRegistr studentRegistr);
+
+    @Mapping(target = "departmentName", source = "student.department.departmentName")
+    @Mapping(target = "group", source = "student.group.groupValue")
+    @Mapping(target = "course", source = "student.course.courseNumber")
+    Student studentEntityToStudent(StudentEntity student);
+
+    List<Student> studentEntityListToStudentList(List<StudentEntity> studentEntityList);
+    GroupEntity map(String value);
+    String map(GroupEntity value);
+
+    CourseEntity mapCourse(String value);
+
+    String map(CourseEntity value);
 
 }
