@@ -19,12 +19,12 @@ public class StudentEntity {
         return this.fio + ' ' + this.group + ' ' + this.phoneNumber;
     }
 
-    public StudentEntity(Long id, String fio, GroupEntity group, String phoneNumber, Integer course, DepartmentEntity dep, UserEntity u) {
+    public StudentEntity(Long id, String fio, GroupEntity group, String phoneNumber, CourseEntity course, DepartmentEntity dep, UserEntity u) {
         this.id = id;
         this.fio = fio;
         this.group = group;
         this.phoneNumber = phoneNumber;
-        this.course = new CourseEntity(null, CourseNumber.valueOf("COURSE_"+course));
+        this.course = course;
         this.department = dep;
         this.user = u;
     }
@@ -41,6 +41,7 @@ public class StudentEntity {
     private String phoneNumber;
 
     @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "course_id")
     private CourseEntity course;
 
     @ManyToOne(cascade = CascadeType.ALL)

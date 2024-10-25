@@ -1,6 +1,7 @@
 package dev.check.service.InitializerAnyServices;
 
 import dev.check.entity.*;
+import dev.check.entity.EnumEntity.CourseNumber;
 import dev.check.entity.EnumEntity.DepartmentName;
 import dev.check.entity.EnumEntity.GroupNumber;
 import dev.check.entity.EnumEntity.Role;
@@ -18,6 +19,19 @@ public class InitializerStudentsUsers {
     private final StudentRepository studentRepository;
 
     private final UserRepository userRepository;
+
+    public void initialAdmin(){
+        ///////    ADMIN без связи со студентом, логично //////
+        UserEntity admin = new UserEntity(
+                "Admin",
+                Role.ADMIN,
+                new PasswordEntity("1234"),
+                true,
+                "myworkemail033@mail.ru",
+                true
+        );
+        userRepository.save(admin);
+    }
     public void initialStudentsUsers(){
         //////////////////   STUDENTы со связью с USERами, кафедрой, группой  ///////////////////
 
@@ -28,7 +42,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_1),
                     "+89" + (100 - j),
-                    1,
+                    new CourseEntity(CourseNumber.COURSE_1),
                     null,
                     null
             );
@@ -38,7 +52,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -51,7 +66,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_2),
                     "+89" + (100 - j),
-                    1,
+                    new CourseEntity(CourseNumber.COURSE_1),
                     null,
                     null
             );
@@ -62,7 +77,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -75,7 +91,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_3),
                     "+89" + (100 - j),
-                    1,
+                    new CourseEntity(CourseNumber.COURSE_1),
                     null,
                     null
             );
@@ -86,7 +102,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -99,7 +116,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_2_1),
                     "+89" + (100 - j),
-                    1,
+                    new CourseEntity(CourseNumber.COURSE_1),
                     null,
                     null
             );
@@ -110,7 +127,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -123,7 +141,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_3_1),
                     "+89" + (100 - j),
-                    1,
+                    new CourseEntity(CourseNumber.COURSE_1),
                     null,
                     null
             );
@@ -134,7 +152,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -147,7 +166,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_3_2),
                     "+89" + (100 - j),
-                    1,
+                    new CourseEntity(CourseNumber.COURSE_1),
                     null,
                     null
             );
@@ -158,7 +177,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -172,7 +192,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_1),
                     "+89" + (100 - j),
-                    2,
+                    new CourseEntity(CourseNumber.COURSE_2),
                     new DepartmentEntity(DepartmentName.KFA),
                     null
             );
@@ -184,7 +204,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -197,7 +218,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_2),
                     "+89" + (100 - j),
-                    2,
+                    new CourseEntity(CourseNumber.COURSE_2),
                     new DepartmentEntity(DepartmentName.KFA),
                     null
             );
@@ -208,7 +229,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -221,7 +243,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_3),
                     "+89" + (100 - j),
-                    2,
+                    new CourseEntity(CourseNumber.COURSE_2),
                     new DepartmentEntity(DepartmentName.KFA),
                     null
             );
@@ -232,7 +254,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -245,7 +268,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_2_1),
                     "+89" + (100 - j),
-                    2,
+                    new CourseEntity(CourseNumber.COURSE_2),
                     new DepartmentEntity(DepartmentName.KMA),
                     null
             );
@@ -256,7 +279,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -269,7 +293,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_3_1),
                     "+89" + (100 - j),
-                    2,
+                    new CourseEntity(CourseNumber.COURSE_2),
                     new DepartmentEntity(DepartmentName.KUCP),
                     null
             );
@@ -280,7 +304,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -293,7 +318,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_3_2),
                     "+89" + (100 - j),
-                    2,
+                    new CourseEntity(CourseNumber.COURSE_2),
                     new DepartmentEntity(DepartmentName.KUCP),
                     null
             );
@@ -304,7 +329,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -318,7 +344,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_1),
                     "+89" + (100 - j),
-                    3,
+                    new CourseEntity(CourseNumber.COURSE_3),
                     new DepartmentEntity(DepartmentName.KFA),
                     null
             );
@@ -329,7 +355,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -342,7 +369,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_2),
                     "+89" + (100 - j),
-                    3,
+                    new CourseEntity(CourseNumber.COURSE_3),
                     new DepartmentEntity(DepartmentName.KFA),
                     null
             );
@@ -353,7 +380,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -366,7 +394,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_1_3),
                     "+89" + (100 - j),
-                    3,
+                    new CourseEntity(CourseNumber.COURSE_3),
                     new DepartmentEntity(DepartmentName.KFA),
                     null
             );
@@ -377,7 +405,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -390,7 +419,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_2_1),
                     "+89" + (100 - j),
-                    3,
+                    new CourseEntity(CourseNumber.COURSE_3),
                     new DepartmentEntity(DepartmentName.KMA),
                     null
             );
@@ -401,7 +430,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -414,7 +444,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_3_1),
                     "+89" + (100 - j),
-                    3,
+                    new CourseEntity(CourseNumber.COURSE_3),
                     new DepartmentEntity(DepartmentName.KUCP),
                     null
             );
@@ -425,7 +455,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 
@@ -438,7 +469,7 @@ public class InitializerStudentsUsers {
                     FIO[(int) (j % FIO.length)],
                     new GroupEntity(GroupNumber.GROUP_3_2),
                     "+89" + (100 - j),
-                    3,
+                    new CourseEntity(CourseNumber.COURSE_3),
                     new DepartmentEntity(DepartmentName.KUCP),
                     null
             );
@@ -449,7 +480,8 @@ public class InitializerStudentsUsers {
                     new PasswordEntity("1234"),
                     true,
                     "myworkemail033@mail.ru",
-                    student0
+                    student0,
+                    true
             );
             userRepository.save(user0);
 

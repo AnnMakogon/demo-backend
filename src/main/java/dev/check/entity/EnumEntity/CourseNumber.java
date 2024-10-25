@@ -14,4 +14,12 @@ public enum CourseNumber {
         this.course = course;
     }
 
+    public static CourseNumber fromString(String courseNum) {
+        for (CourseNumber course : values()) {
+            if (course.course.equals(courseNum)) {
+                return course;
+            }
+        }
+        return null;
+    }
 }

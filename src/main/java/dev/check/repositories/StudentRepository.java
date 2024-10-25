@@ -22,7 +22,7 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
             "OR CAST(s.course_id AS TEXT) ILIKE %:substring% " +
             "OR CAST(d.department_name AS TEXT) ILIKE %:substring% " +
             "OR CAST(g.group_value AS TEXT) ILIKE %:substring%)")
-    public Page<StudentEntity> getStudentsAdmin(@Param("substring") String substring, Pageable page);
+    Page<StudentEntity> getStudentsAdmin(@Param("substring") String substring, Pageable page);
 
     @Query(nativeQuery = true, value = "SELECT s.id, s.fio , g.*, d.* " +
             "CASE WHEN fio = :userName THEN phone_number ELSE ' ' END as phone_number " +
@@ -35,5 +35,5 @@ public interface StudentRepository extends JpaRepository<StudentEntity, Long> {
             "OR CAST(s.course AS TEXT) ILIKE %:substring% " +
             "OR CAST(d.department_name AS TEXT) ILIKE %:substring% " +
             "OR CAST(g.group_value AS TEXT) ILIKE %:substring%)")
-    public Page<StudentEntity> getStudentsStudent(@Param("substring") String substring, Pageable page, @Param("userName") String userName);
+    Page<StudentEntity> getStudentsStudent(@Param("substring") String substring, Pageable page, @Param("userName") String userName);
 }

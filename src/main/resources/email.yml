@@ -13,7 +13,7 @@ spring:
 
 emailService:
   registr:
-    url: http://localhost:4200/saveregistration
+    url: http://localhost:4200/saveregistration?id=
     textHolder: this link
     subject: Registration on app Check
     text: |

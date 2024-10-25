@@ -32,7 +32,7 @@ public class NewsletterEntity {
     private String text;
     private String subject;
 
-    @OneToMany(mappedBy = "newsletter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "newsletter", cascade = CascadeType.ALL)
     @Fetch(FetchMode.SUBSELECT)
     private List<AddressEntity> addresses = new ArrayList<>();
 

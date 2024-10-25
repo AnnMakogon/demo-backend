@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-10-04T14:19:27+0300",
+    date = "2024-10-22T18:58:59+0300",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.6.jar, environment: Java 1.8.0_382 (Amazon.com Inc.)"
 )
 @Component
@@ -48,13 +48,70 @@ public class StudentMapperImpl implements StudentMapper {
 
         StudentEntity studentEntity = new StudentEntity();
 
+        studentEntity.setDepartment( mapDep( studentDtoRegis.getDepartmentName() ) );
+        studentEntity.setCourse( mapCourse( studentDtoRegis.getCourse() ) );
+        studentEntity.setGroup( map( studentDtoRegis.getGroup() ) );
         studentEntity.setId( studentDtoRegis.getId() );
         studentEntity.setFio( studentDtoRegis.getFio() );
-        studentEntity.setGroup( map( studentDtoRegis.getGroup() ) );
         studentEntity.setPhoneNumber( studentDtoRegis.getPhoneNumber() );
-        studentEntity.setCourse( mapCourse( studentDtoRegis.getCourse() ) );
 
         return studentEntity;
+    }
+
+    @Override
+    public DepartmentEntity mapDepartmentEntity(StudentRegistr studentRegistr) {
+        if ( studentRegistr == null ) {
+            return null;
+        }
+
+        DepartmentEntity departmentEntity = new DepartmentEntity();
+
+        if ( studentRegistr.getDepartmentName() != null ) {
+            departmentEntity.setDepartmentName( Enum.valueOf( DepartmentName.class, studentRegistr.getDepartmentName() ) );
+        }
+
+        return departmentEntity;
+    }
+
+    @Override
+    public DepartmentEntity mapDep(String value) {
+        if ( value == null ) {
+            return null;
+        }
+
+        DepartmentEntity departmentEntity = new DepartmentEntity();
+
+        return departmentEntity;
+    }
+
+    @Override
+    public CourseEntity mapCourseEntity(StudentRegistr studentRegistr) {
+        if ( studentRegistr == null ) {
+            return null;
+        }
+
+        CourseEntity courseEntity = new CourseEntity();
+
+        if ( studentRegistr.getCourse() != null ) {
+            courseEntity.setCourseNumber( Enum.valueOf( CourseNumber.class, studentRegistr.getCourse() ) );
+        }
+
+        return courseEntity;
+    }
+
+    @Override
+    public GroupEntity mapGroupEntity(StudentRegistr studentRegistr) {
+        if ( studentRegistr == null ) {
+            return null;
+        }
+
+        GroupEntity groupEntity = new GroupEntity();
+
+        if ( studentRegistr.getGroup() != null ) {
+            groupEntity.setGroupValue( Enum.valueOf( GroupNumber.class, studentRegistr.getGroup() ) );
+        }
+
+        return groupEntity;
     }
 
     @Override

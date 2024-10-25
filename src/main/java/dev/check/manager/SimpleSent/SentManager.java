@@ -3,6 +3,7 @@ package dev.check.manager.SimpleSent;
 import dev.check.dto.Address;
 import dev.check.dto.Newsletter;
 import dev.check.entity.AddressEntity;
+import dev.check.entity.Auxiliary.AddressCourseEntity;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.mapper.NewsletterMapper;
 import dev.check.service.NewsletterService;
@@ -31,7 +32,6 @@ public class SentManager {
     @Value("${sentManagers.defaultAddress}")
     private String defaultAddress;
 
-    //todo сделай выключение через application
     //сама отправка
     //@Scheduled(fixedRate = 180000) // 3 мин // ЗАКОMМЕНТИЛА ЧТОБЫ НЕ ОТПРАВЛЯЛО ПИСЬМА
     public void schedulerSent() throws MessagingException {
@@ -48,19 +48,22 @@ public class SentManager {
                     sentExecutor.schedulerSendMessage(newsletter, defaultAddress);
                 } else {
                     for (Address address : newsletter.getAddress()) {
-                            AddressEntity addressEntity = nlMapper.addressToAddressEntity(address);
+                        AddressEntity addressEntity = nlMapper.addressToAddressEntity(address);
 
-                            log.info("Size of addresses: " + newsletter.getAddress().size());
-                            List<String> emails = newsletterService.getEmailForSent(addressEntity.getCourse().getCourseNumber().getCourse(),
-                                    address.getDepartments().toString(),
+                        log.info("Size of addresses: " + newsletter.getAddress().size());
+                        for (AddressCourseEntity addressCourse : addressEntity.getCourses()) {
+                            List<String> emails = newsletterService.getEmailForSent(addressCourse.getCourse().getCourseNumber().getCourse(),
+                                    null,//address.getDepartments(), заглушка
                                     addressEntity.getGroups()
                             );
+
 
                             log.info("Size of emails: " + emails.size());
                             for (String email : emails) {
 
                                 sentExecutor.schedulerSendMessage(newsletter, email);
                             }
+                        }
                     }
                 }
             }

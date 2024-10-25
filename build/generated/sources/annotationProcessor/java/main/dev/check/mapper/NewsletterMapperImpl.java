@@ -3,6 +3,7 @@ package dev.check.mapper;
 import dev.check.dto.Address;
 import dev.check.dto.Newsletter;
 import dev.check.entity.AddressEntity;
+import dev.check.entity.Auxiliary.AddressCourseEntity;
 import dev.check.entity.Auxiliary.AddressDepartmentEntity;
 import dev.check.entity.Auxiliary.AddressGroupEntity;
 import dev.check.entity.CourseEntity;
@@ -10,7 +11,6 @@ import dev.check.entity.DepartmentEntity;
 import dev.check.entity.EnumEntity.DepartmentName;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.EnumEntity.Status;
-import dev.check.entity.GroupEntity;
 import dev.check.entity.NewsletterEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-10-04T14:19:27+0300",
+    date = "2024-10-22T18:58:59+0300",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.6.jar, environment: Java 1.8.0_382 (Amazon.com Inc.)"
 )
 @Component
@@ -92,12 +92,7 @@ public class NewsletterMapperImpl implements NewsletterMapper {
         AddressEntity addressEntity = new AddressEntity();
 
         addressEntity.setRole( mapRole( address.getRole() ) );
-        if ( address.getCourse() != null ) {
-            addressEntity.setCourse( mapCourse( address.getCourse() ) );
-        }
-        else {
-            addressEntity.setCourse( null );
-        }
+        addressEntity.setCourses( mapCourseList( address.getCourses() ) );
         addressEntity.setDepartments( mapAddDepartmentList( address.getDepartments() ) );
         addressEntity.setGroups( mapList( address.getGroups() ) );
 
@@ -200,23 +195,98 @@ public class NewsletterMapperImpl implements NewsletterMapper {
     }
 
     @Override
-    public Newsletter newsletterdEntityToNewsletter(NewsletterEntity entity) {
+    public Newsletter newsletterEntityToNewsletter(NewsletterEntity entity) {
         if ( entity == null ) {
             return null;
         }
 
         Newsletter newsletter = new Newsletter();
 
+        newsletter.setAddress( addressEntitiesToAddresses( entity.getAddresses() ) );
+        if ( entity.getStatus() != null ) {
+            newsletter.setStatus( entity.getStatus().name() );
+        }
         newsletter.setId( entity.getId() );
         newsletter.setDate( entity.getDate() );
         newsletter.setText( entity.getText() );
         newsletter.setSubject( entity.getSubject() );
         newsletter.setSent( entity.getSent() );
-        if ( entity.getStatus() != null ) {
-            newsletter.setStatus( entity.getStatus().name() );
-        }
 
         return newsletter;
+    }
+
+    @Override
+    public List<Address> addressEntitiesToAddresses(List<AddressEntity> entities) {
+        if ( entities == null ) {
+            return null;
+        }
+
+        List<Address> list = new ArrayList<Address>( entities.size() );
+        for ( AddressEntity addressEntity : entities ) {
+            list.add( addressEntityToAddress( addressEntity ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public Address addressEntityToAddress(AddressEntity entity) {
+        if ( entity == null ) {
+            return null;
+        }
+
+        Address address = new Address();
+
+        if ( entity.getRole() != null ) {
+            address.setRole( entity.getRole().name() );
+        }
+        address.setCourses( mapCourses( entity.getCourses() ) );
+        address.setGroups( mapGroups( entity.getGroups() ) );
+        address.setDepartments( mapDepartments( entity.getDepartments() ) );
+
+        return address;
+    }
+
+    @Override
+    public List<String> mapCourses(List<AddressCourseEntity> value) {
+        if ( value == null ) {
+            return null;
+        }
+
+        List<String> list = new ArrayList<String>( value.size() );
+        for ( AddressCourseEntity addressCourseEntity : value ) {
+            list.add( mapCourse( addressCourseEntity ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<String> mapGroups(List<AddressGroupEntity> value) {
+        if ( value == null ) {
+            return null;
+        }
+
+        List<String> list = new ArrayList<String>( value.size() );
+        for ( AddressGroupEntity addressGroupEntity : value ) {
+            list.add( mapGroup( addressGroupEntity ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public List<String> mapDepartments(List<AddressDepartmentEntity> value) {
+        if ( value == null ) {
+            return null;
+        }
+
+        List<String> list = new ArrayList<String>( value.size() );
+        for ( AddressDepartmentEntity addressDepartmentEntity : value ) {
+            list.add( mapDepartment( addressDepartmentEntity ) );
+        }
+
+        return list;
     }
 
     @Override
@@ -227,35 +297,10 @@ public class NewsletterMapperImpl implements NewsletterMapper {
 
         List<Newsletter> list = new ArrayList<Newsletter>( entities.size() );
         for ( NewsletterEntity newsletterEntity : entities ) {
-            list.add( newsletterdEntityToNewsletter( newsletterEntity ) );
+            list.add( newsletterEntityToNewsletter( newsletterEntity ) );
         }
 
         return list;
-    }
-
-    @Override
-    public List<GroupEntity> map(List<String> value) {
-        if ( value == null ) {
-            return null;
-        }
-
-        List<GroupEntity> list = new ArrayList<GroupEntity>( value.size() );
-        for ( String string : value ) {
-            list.add( map( string ) );
-        }
-
-        return list;
-    }
-
-    @Override
-    public GroupEntity map(String value) {
-        if ( value == null ) {
-            return null;
-        }
-
-        GroupEntity groupEntity = new GroupEntity();
-
-        return groupEntity;
     }
 
     @Override
@@ -306,6 +351,33 @@ public class NewsletterMapperImpl implements NewsletterMapper {
         AddressGroupEntity addressGroupEntity = new AddressGroupEntity();
 
         return addressGroupEntity;
+    }
+
+    @Override
+    public List<AddressCourseEntity> mapCourseList(List<String> value) {
+        if ( value == null ) {
+            return null;
+        }
+
+        List<AddressCourseEntity> list = new ArrayList<AddressCourseEntity>( value.size() );
+        for ( String string : value ) {
+            list.add( mapAddressCourse( string ) );
+        }
+
+        return list;
+    }
+
+    @Override
+    public AddressCourseEntity mapAddressCourse(String course) {
+        if ( course == null ) {
+            return null;
+        }
+
+        AddressCourseEntity addressCourseEntity = new AddressCourseEntity();
+
+        addressCourseEntity.setCourse( mapCourse( course ) );
+
+        return addressCourseEntity;
     }
 
     @Override

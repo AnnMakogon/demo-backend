@@ -69,7 +69,6 @@ public class StudentService {
                 userRepository.save(changingUser);
             }
         }
-
         return studentDto;
     }
 

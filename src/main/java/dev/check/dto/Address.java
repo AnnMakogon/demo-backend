@@ -14,7 +14,7 @@ import java.util.List;
 public class Address {
 
     private String role;
-    private String course;
+    private List<String> courses;
     private List<String> departments;
     private List<String> groups;
 }

@@ -26,10 +26,6 @@ public class GroupEntity {
     @Enumerated(EnumType.STRING)
     private GroupNumber groupValue;
 
-    /*@ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "address_id")
-    private AddressEntity address;*/
-
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StudentEntity> students;
 
@@ -39,5 +35,7 @@ public class GroupEntity {
     public GroupEntity(GroupNumber groupValue){
         this.groupValue = groupValue;
         this.students = new ArrayList<>();
+        this.addresses = new ArrayList<>();
     }
+
 }

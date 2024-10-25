@@ -18,21 +18,23 @@ import lombok.Setter;
 @SequenceGenerator(name = "user_seq", sequenceName = "user_seq", allocationSize = 1/*, schema = "public"*/)
 public class UserEntity {
 
-    public UserEntity(String username, Role role, PasswordEntity password, boolean enable, String email) {
+    public UserEntity(String username, Role role, PasswordEntity password, boolean enable, String email, Boolean enableEmail) {
         this.username = username;
         this.role = role;
         this.password = password;
         this.enable = enable;
         this.email = email;
+        this.enableEmail = enableEmail;
     }
 
-    public UserEntity(String username, Role role, PasswordEntity password, boolean enable, String email, StudentEntity student) {
+    public UserEntity(String username, Role role, PasswordEntity password, boolean enable, String email, StudentEntity student, Boolean enableEmail) {
         this.username = username;
         this.role = role;
         this.password = password;
         this.enable = enable;
         this.email = email;
         this.student = student;
+        this.enableEmail = enableEmail;
     }
 
     @Id
@@ -49,6 +51,8 @@ public class UserEntity {
     private PasswordEntity password;
 
     private boolean enable;
+
+    private boolean enableEmail;
 
     private String email;
 

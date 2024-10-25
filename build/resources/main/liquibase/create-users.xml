@@ -29,6 +29,19 @@
         </sql>
     </changeSet>
 
+    <changeSet id="del-column-enableEmail" author="Ann" runOnChange="true">
+        <sql>
+            ALTER TABLE users DROP COLUMN enableEmail;
+        </sql>
+    </changeSet>
+
+
+    <changeSet id="add-column-enable_Email" author="Ann" runOnChange="true">
+        <sql>
+            ALTER TABLE users ADD COLUMN enable_Email BOOLEAN;
+        </sql>
+    </changeSet>
+
 
 
 

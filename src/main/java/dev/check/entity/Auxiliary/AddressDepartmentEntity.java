@@ -22,11 +22,11 @@ public class AddressDepartmentEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addDep_seq")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private AddressEntity address;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "department_id")
     private DepartmentEntity department;
 

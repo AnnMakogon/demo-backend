@@ -1,6 +1,5 @@
 package dev.check.manager.SentOnTime;
 
-import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

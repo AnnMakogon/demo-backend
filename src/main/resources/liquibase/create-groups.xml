@@ -22,6 +22,26 @@
             );
         </sql>
     </changeSet>
+
+    <changeSet id="add-address-group_id" author="Ann" runOnChange="true">
+        <sql>
+            ALTER TABLE addresses
+            ADD COLUMN group_id BIGINT UNIQUE;
+
+            ALTER TABLE addresses
+            ADD CONSTRAINT fk_group_address FOREIGN KEY (group_id) REFERENCES groups(id);
+        </sql>
+    </changeSet>
+
+    <changeSet id="remove-address-course_id" author="Ann" runOnChange="true">
+        <sql>
+            ALTER TABLE addresses
+            DROP CONSTRAINT fk_group_address;
+
+            ALTER TABLE addresses
+            DROP COLUMN group_id;
+        </sql>
+    </changeSet>
     <!--<changeSet id="add-foreign-key-to-address" author="Ann" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>

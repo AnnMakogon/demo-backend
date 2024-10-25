@@ -2,8 +2,10 @@ package dev.check.manager.SentOnTime;
 
 import dev.check.dto.Newsletter;
 import dev.check.entity.AddressEntity;
+import dev.check.entity.Auxiliary.AddressCourseEntity;
+import dev.check.entity.CourseEntity;
+import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;
-import dev.check.mapper.NewsletterMapper;
 import dev.check.service.NewsletterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,51 +22,58 @@ import java.util.concurrent.*;
 @RequiredArgsConstructor
 public class SentManagerOnTime {
     private final NewsletterService newsletterService;
-    private final NewsletterMapper newsletterMapper;
     private final SentExecutorOnTime sentExecutorOnTime;
-    private ConcurrentHashMap<Long, ScheduledFuture<?>> scheduledTasksMap = new ConcurrentHashMap<>();
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
 
     public void sentOnTimeLetter(){
-        List<Newsletter> newsletters = newsletterService.getForSentScheduler(10);
+        newsletterService.setAllStatusNotSent();
+        List<Newsletter> newsletters = newsletterService.getForSentScheduler(10);// взяли с бд первых 10 не отправленных писем
 
+        if (newsletters.isEmpty()){
+            log.info("All Letters have been sent");
+            return ;
+        }
         for (Newsletter newsletter : newsletters) {
-            NewsletterEntity newsletterEntity = newsletterMapper.newsletterDtoToNewsletter(newsletter);
 
-            long initialDelay = Duration.between(OffsetDateTime.now(), newsletter.getDate()).toMillis(); //время до отправки
+            newsletterService.changeStatus(newsletter.getId(), Status.INPROCESSING);
+            long initialDelay = Duration.between(OffsetDateTime.now(), newsletter.getDate()).toMillis();
 
-            if (initialDelay >= 0) {
-                ScheduledFuture<?> future = scheduler.schedule(() -> {
-                   this.preparationForSent(newsletterEntity);
-                }, initialDelay, TimeUnit.MILLISECONDS);
+            Runnable task = () -> {
+                NewsletterEntity currentNewsletter = newsletterService.findNewsletterWithAddressesById(newsletter.getId());
+                if (currentNewsletter != null && !currentNewsletter.getAddresses().isEmpty()) {
+                    log.info("Проверка таски 1");
 
-                scheduledTasksMap.put(newsletter.getId(), future);
-            } else {
-                log.info("Newsletter with id: " + newsletter.getId() + " has already missed its dispatch time.");
-            }
+                    currentNewsletter.getAddresses().stream()
+                            .flatMap(address -> address.getCourses().stream()
+                                    .flatMap(addressCourse -> {
+                                        log.info("Проверка таски 3");
+                                        List<String> emails = newsletterService.getEmailForSent(
+                                                addressCourse.getCourse().getCourseNumber().toString(),
+                                                address.getDepartments(),
+                                                address.getGroups()
+                                        );
+                                        log.info("Проверка таски 4");
+                                        return emails.stream();
+                                    })
+                            )
+                            .forEach(email -> {
+                                log.info("Проверка таски 5");
+                                try {
+                                    sentExecutorOnTime.schedulerSendMessage(currentNewsletter, email);
+                                } catch (MessagingException e) {
+                                    throw new RuntimeException(e);
+                                }
+                                newsletterService.changeStatus(newsletter.getId(), Status.SUCCESSFULLY);
+                            });
+                }
+            };
+            scheduler.schedule(task, initialDelay, TimeUnit.MILLISECONDS);
+        }
+
+        OffsetDateTime lastSendingTime = newsletters.get(newsletters.size()-1).getDate();
+        if (lastSendingTime != null){
+            long nextIterationDelay = Duration.between(OffsetDateTime.now(), lastSendingTime).toMillis();
+            scheduler.schedule(this::sentOnTimeLetter, nextIterationDelay,TimeUnit.MILLISECONDS);
         }
     }
-    public void preparationForSent(NewsletterEntity newsletter) {
-        long initialDelay = Duration.between(OffsetDateTime.now(), newsletter.getDate()).toMillis() + 25L;
-
-        Runnable task = () -> {
-            try {
-                NewsletterEntity currentNewsletter = newsletterService.findNewsletterWithAddressesById(newsletter.getId());
-                if (currentNewsletter != null) {
-                    if (!currentNewsletter.getAddresses().isEmpty()) {
-                        for (AddressEntity address : currentNewsletter.getAddresses()) {
-                            List<String> emails = newsletterService.getEmailForSent(address.getCourse().getCourseNumber().getCourse(), address.getDepartments().toString(), address.getGroups());
-                            for (String email : emails) {
-                                sentExecutorOnTime.schedulerSendMessage(currentNewsletter, email);
-                            }
-                        }
-                    }
-                }
-            } catch (MessagingException e) {
-                throw new RuntimeException(e);
-            }
-        };
-        scheduler.schedule(task, initialDelay, TimeUnit.MILLISECONDS);
-    }
-
 }

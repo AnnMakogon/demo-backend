@@ -2,7 +2,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username:
+    username: makogon.anna11.10@gmail.com
     password: coky zgzt jwdj dxhd
     properties:
       mail:
@@ -13,7 +13,7 @@ spring:
 
 emailService:
   registr:
-    url: http://localhost:4200/saveregistration
+    url: http://localhost:4200/saveregistration?id=
     textHolder: this link
     subject: Registration on app Check
     text: |

@@ -15,6 +15,8 @@ public class UserService {
 
     @Transactional  //из-за обращения в бд вынесено в сервис
     public User getUserForLogin(UsernamePasswordAuthenticationToken token){
-        return new User(userRepository.findIdByName(token.getName()), token.getName(), String.valueOf(token.getAuthorities()), true );
+        return new User(userRepository.findIdByName(token.getName()), token.getName(),
+                String.valueOf(token.getAuthorities()), true,
+                userRepository.findEnableEmailByName(token.getName()), userRepository.findStudentIdByName(token.getName()) );
     }
 }

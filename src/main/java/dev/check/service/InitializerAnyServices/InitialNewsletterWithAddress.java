@@ -1,9 +1,13 @@
 package dev.check.service.InitializerAnyServices;
 
 import dev.check.entity.*;
+import dev.check.entity.Auxiliary.AddressCourseEntity;
 import dev.check.entity.Auxiliary.AddressDepartmentEntity;
 import dev.check.entity.Auxiliary.AddressGroupEntity;
 import dev.check.entity.EnumEntity.*;
+import dev.check.repositories.CourseRepository;
+import dev.check.repositories.DepartmentRepository;
+import dev.check.repositories.GroupRepository;
 import dev.check.repositories.NewsletterRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -21,59 +24,42 @@ public class InitialNewsletterWithAddress {
 
     private final NewsletterRepository newsletterRepository;
 
+    private final DepartmentRepository departmentRepository;
+
+    private final CourseRepository courseRepository;
+
+    private final GroupRepository groupRepository;
+
     public void initialNewsletterWithAddress(){
         // сохранение рассылки с адресом
-        AddressEntity address = new AddressEntity(null, Role.STUDENT, new CourseEntity(null, CourseNumber.COURSE_3), null, null, null);
-        //address.setRole(Role.STUDENT);
-        //address.setCourse(3);
-
-        GroupEntity group = new GroupEntity(null, GroupNumber.GROUP_1_3, null, Collections.singletonList(address));
-        //group.setGroupValue(1.3f);
-        //group.setAddress(address);
-        //groupRepository.save(group);
-
-        List<GroupEntity> groups = new ArrayList<>();
-        groups.add(group);
+        AddressEntity address = new AddressEntity((Long) null, Role.STUDENT, null, null, null, null);
 
         GroupEntity group1 = new GroupEntity(GroupNumber.GROUP_3_3);
-        //groupRepository.save(group1);
         AddressGroupEntity addressGroup = new AddressGroupEntity(null, address, group1);
-        //addressGroup.setAddress(address);
-        //addressGroup.setGroup(group1);
-
         List<AddressGroupEntity> addGroups = new ArrayList<>();
         addGroups.add(addressGroup);
         address.setGroups(addGroups);
 
-        DepartmentEntity department = new DepartmentEntity(DepartmentName.KFA);
-        //departmentRepository.save(department);
-        AddressDepartmentEntity addressDepartment = new AddressDepartmentEntity(null, address, department );
-        //addressDepartment.setAddress(address);
-        //addressDepartment.setDepartment(department);
+        CourseEntity course1 = new CourseEntity(CourseNumber.COURSE_1);
+        AddressCourseEntity addressCourse = new AddressCourseEntity(null, address, course1);
+        List<AddressCourseEntity> addCourse = new ArrayList<>();
+        addCourse.add(addressCourse);
+        address.setCourses(addCourse);
 
+        DepartmentEntity department1 = new DepartmentEntity(DepartmentName.KFA);
+        AddressDepartmentEntity addressDepartment = new AddressDepartmentEntity(null, address, department1 );
         List<AddressDepartmentEntity> departments = new ArrayList<>();
         departments.add(addressDepartment);
-
         address.setDepartments(departments);
 
-        GroupEntity group11 = new GroupEntity(GroupNumber.GROUP_1_3);
-        //groupRepository.save(group11);
-        //address.setGroupStudent(Collections.singletonList(group11));
 
         NewsletterEntity newsletter = new NewsletterEntity(null, OffsetDateTime.now().plusSeconds(30),
                 "This is the newsletter text.", "Newsletter Subject",
                 null, false, Status.NOTSENT );
-        //newsletter.setDate(OffsetDateTime.now().plusSeconds(30));
-        //newsletter.setText("This is the newsletter text.");
-        //newsletter.setSubject("Newsletter Subject");
-        //newsletter.setSent(false);
-        //newsletter.setStatus(Status.NOTSENT);
 
         address.setNewsletter(newsletter);
-
         newsletterRepository.save(newsletter);
 
-        //addressRepository.save(address);
 
         OffsetDateTime[] dates = new OffsetDateTime[110];
 
@@ -81,15 +67,15 @@ public class InitialNewsletterWithAddress {
         for (int i = 0; i < 110; i++) {
             dates[i] = currentTime.plusSeconds(30 * i);
         }
+        //сохранение адреса с заполнением вспомогательных таблиц
+        AddressEntity add = new AddressEntity(Role.STUDENT);
+        AddressEntity add0 = new AddressEntity(Role.STUDENT);
 
+        // кафедра
         DepartmentEntity department2 = new DepartmentEntity(DepartmentName.KFA);
-        //departmentRepository.save(department2);
-
+        departmentRepository.save(department2);
         DepartmentEntity department3 = new DepartmentEntity(DepartmentName.KFA);
-        //departmentRepository.save(department3);
-
-        AddressEntity add = new AddressEntity(null, Role.STUDENT, new CourseEntity(null, CourseNumber.COURSE_2), null, null, new ArrayList<>());
-        AddressEntity add0 = new AddressEntity(null, Role.STUDENT,  new CourseEntity(null, CourseNumber.COURSE_2), null, null, new ArrayList<>());
+        departmentRepository.save(department3);
 
         AddressDepartmentEntity addressDepartment1 = new AddressDepartmentEntity(null, add, department2);
         AddressDepartmentEntity addressDepartment2 = new AddressDepartmentEntity(null, add0, department3);
@@ -100,12 +86,43 @@ public class InitialNewsletterWithAddress {
         department2.getAddresses().add(addressDepartment1.getAddress());
         department3.getAddresses().add(addressDepartment2.getAddress());
 
+        //курс
+        CourseEntity course2 = new CourseEntity(CourseNumber.COURSE_1);
+        courseRepository.save(course2);
+        CourseEntity course3 = new CourseEntity(CourseNumber.COURSE_2);
+        courseRepository.save(course3);
+
+        AddressCourseEntity addressCourse1 = new AddressCourseEntity(null, add, course2);
+        AddressCourseEntity addressCourse2 = new AddressCourseEntity(null, add0, course3);
+
+        add.getCourses().add(addressCourse1);
+        add0.getCourses().add(addressCourse2);
+
+        course2.getAddresses().add(addressCourse1.getAddress());
+        course3.getAddresses().add(addressCourse2.getAddress());
+
+        // группа
+        GroupEntity group2 = new GroupEntity(GroupNumber.GROUP_3_2);
+        groupRepository.save(group2);
+        GroupEntity group3 = new GroupEntity(GroupNumber.GROUP_3_1);
+        groupRepository.save(group3);
+
+        AddressGroupEntity addressGroup1 = new AddressGroupEntity(null, add, group2);
+        AddressGroupEntity addressGroup2 = new AddressGroupEntity(null, add, group3);
+
+        add.getGroups().add(addressGroup1);
+        add0.getGroups().add(addressGroup2);
+
+        group2.getAddresses().add(addressGroup1.getAddress());
+        group3.getAddresses().add(addressGroup2.getAddress());
+
+
         NewsletterEntity newsletterTest = new NewsletterEntity(
                 null,
                 OffsetDateTime.now().plusSeconds(40),
                 "Proverka AAAAAAAAA",
                 "Proverka subject",
-                null,//addList,
+                null,
                 false,
                 Status.NOTSENT
         );
@@ -167,3 +184,4 @@ public class InitialNewsletterWithAddress {
         }
     }
 }
+

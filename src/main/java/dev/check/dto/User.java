@@ -15,4 +15,6 @@ public class User {
     private String username;
     private String role;
     private boolean enable;
+    private boolean enableEmail;
+    private Long studentId;
 }

@@ -22,11 +22,11 @@ public class AddressGroupEntity {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "addGr_seq")
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private AddressEntity address;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "group_id")
     private GroupEntity group;
 

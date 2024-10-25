@@ -2,22 +2,18 @@ package dev.check.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dev.check.dto.Address;
-import dev.check.dto.Newsletter;
-import dev.check.dto.ParamForGet;
-import dev.check.dto.StudentRegistr;
+import dev.check.dto.*;
 import dev.check.entity.AddressEntity;
+import dev.check.entity.Auxiliary.AddressDepartmentEntity;
 import dev.check.entity.Auxiliary.AddressGroupEntity;
 import dev.check.entity.EnumEntity.Role;
 import dev.check.entity.EnumEntity.Status;
 import dev.check.entity.NewsletterEntity;
+import dev.check.entity.UserEntity;
 import dev.check.manager.ManagerUtils;
-import dev.check.manager.SentManagerOnTime;
 import dev.check.mapper.NewsletterMapper;
-import dev.check.repositories.AddressDepartmentRepository;
-import dev.check.repositories.AddressGroupRepository;
-import dev.check.repositories.NewsletterRepository;
-import dev.check.repositories.UserRepository;
+
+import dev.check.repositories.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +53,7 @@ public class NewsletterService {
 
     private final AddressGroupRepository addressGroupRepository;
 
-    private SentManagerOnTime sentManagerOnTime;
+    private final AddressCourseRepository addressCourseRepository;
 
     @Value("${emailService.registr.url}")
     private String url;
@@ -71,35 +67,28 @@ public class NewsletterService {
     @Value("${emailService.registr.text}")
     private String text;
 
-    //это для подтверждения регистрации
+    //для подтверждения регистрации
     @Transactional
-    public void sendRegistrMessage(StudentRegistr newStudent) {
-        if (userRepository.findUserByName(newStudent.getFio())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "username already exist");
-        }
+    public void sendRegistrMessage(User newStudent) {
         try {
+            UserEntity userWithEmail = userRepository.getUserByName(newStudent.getUsername());
 
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonStudentRegistr = objectMapper.writeValueAsString(newStudent);
-            String encodedJsonStudentRegistr = URLEncoder.encode(jsonStudentRegistr, StandardCharsets.UTF_8.toString());
-
-            String urlWithJson = this.url + "?data=" + encodedJsonStudentRegistr;
+            String urlWithId = this.url+userWithEmail.getId();
 
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setTo(newStudent.getEmail());
+            helper.setTo(userWithEmail.getEmail());
             helper.setSubject(this.subject);
 
-            String link = "<a href='" + urlWithJson + "'>" + this.textHolder + "</a>";
+            String link = "<a href='" + urlWithId + "'>" + this.textHolder + "</a>";
             String fullText = "<html><body>" +
                     "<p>" + this.text + "</p>" +
                     "<p>" + link + "</p>" +
                     "</body></html>";
             helper.setText(fullText, true);
             emailSender.send(message);
-        } catch (JsonProcessingException | UnsupportedEncodingException |
-                 MessagingException exception) {
+        } catch (MessagingException exception) {
             exception.printStackTrace();
         }
     }
@@ -115,7 +104,6 @@ public class NewsletterService {
             newsletter0.setDate(newsletter0.getDate().minusHours(3));
             newsletterRepository.save(newsletter0);  //первичная запись в бд со статусом "в очереди"
             idList.add(newsletter0.getId());
-            sentManagerOnTime.checkQueue(newsletter0);
         });
         return idList;
 
@@ -169,7 +157,6 @@ public class NewsletterService {
     @Transactional
     public Long deleteNewsletter(Long id) {
         newsletterRepository.deleteById(id);
-        sentManagerOnTime.checkQueueDelete(id);
         return id;
     }
 
@@ -187,7 +174,6 @@ public class NewsletterService {
         saveNewsletter.setAddresses(newsletterEntity.getAddresses());
         saveNewsletter.setDate(saveNewsletter.getDate().minusHours(3));
         newsletterRepository.save(saveNewsletter);
-        sentManagerOnTime.checkQueue(saveNewsletter);
         return newsletter;
     }
 
@@ -202,7 +188,6 @@ public class NewsletterService {
         changingNewsletter.setDate(newsletter.getDate());
         changingNewsletter.setDate(changingNewsletter.getDate().minusHours(3));
         newsletterRepository.save(changingNewsletter);
-        sentManagerOnTime.checkQueue(changingNewsletter);
         return newsletterDto;
     }
     @Transactional
@@ -225,31 +210,28 @@ public class NewsletterService {
 
     @Transactional
     public List<Newsletter> getForSentScheduler(int size) {
-        return newsletterMapper.newsletterEntityListToNewsletterList( newsletterRepository.getForSentScheduler(size));
+        List<NewsletterEntity> newsletterEntities =  newsletterRepository.getForSentScheduler(size);
+        return newsletterMapper.newsletterEntityListToNewsletterList(newsletterEntities);
     }
 
     @Transactional
-    public List<String> getEmailForSent(String course, String department, List<AddressGroupEntity> groups) {
-        List<String> emails = null;
-        for( AddressGroupEntity addressGroup : groups) {
-            emails.addAll(userRepository.getNewsletterForSent(course, department, addressGroup.getGroup().getGroupValue().getGroup()));
-        }
-        return emails;
-    }
-
-    @Transactional
-    public void save(NewsletterEntity newsletter) {
-        newsletterRepository.save(newsletter);
+    public List<String> getEmailForSent(String course, List<AddressDepartmentEntity> departments, List<AddressGroupEntity> groups) {
+        return groups.stream()
+                .flatMap(addressGroup -> departments.stream()
+                        .flatMap(addressDepartment ->
+                                userRepository.getNewsletterForSent(
+                                        course, addressDepartment.getDepartment().getDepartmentName().toString(), addressGroup.getGroup().getGroupValue().toString()
+                                ).stream()
+                        )
+                ).collect(Collectors.toList());
     }
 
     @Transactional
     public void changeStatus(Long id, Status status) {
         newsletterRepository.changeStatus(id, status.toString());
-    }
-
-    @Transactional
-    public NewsletterEntity findById(Long id) {
-        return newsletterRepository.findById(id).get();
+        if (status == Status.SUCCESSFULLY){
+            newsletterRepository.changeSent();
+        }
     }
 
     @Transactional(readOnly = true)
@@ -263,9 +245,17 @@ public class NewsletterService {
                 address.getDepartments().forEach(department -> {
                     addressDepartmentRepository.findById(department.getId()).orElse(null);
                 });
+                address.getCourses().forEach(course -> {
+                    addressCourseRepository.findById(course.getId()).orElse(null);
+                });
             });
 
         return newsletter;
+    }
+
+    @Transactional
+    public void setAllStatusNotSent(){
+        newsletterRepository.setAllStatusNotSent();
     }
 
 }

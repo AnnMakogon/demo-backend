@@ -4,33 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-
-    <!--<changeSet author="Ann" id="drop-all-tables">
-        <sql>
-            DROP SCHEMA public CASCADE;
-            CREATE SCHEMA public;
-        </sql>
-    </changeSet>
-    <changeSet id="1" author="your-name">
-        <createTable tableName="databasechangelog">
-            <column name="ID" type="SERIAL PRIMARY KEY"/>
-            <column name="AUTHOR" type="VARCHAR(255) NOT NULL"/>
-            <column name="FILENAME" type="VARCHAR(255) NOT NULL"/>
-            <column name="DATEEXECUTED" type="TIMESTAMP NOT NULL"/>
-            <column name="ORDEREXECUTED" type="INTEGER NOT NULL"/>
-            <column name="EXECTYPE" type="VARCHAR(10) NOT NULL"/>
-            <column name="MD5SUM" type="VARCHAR(255)"/>
-            <column name="DESCRIPTION" type="VARCHAR(255)"/>
-            <column name="COMMENTS" type="VARCHAR(255)"/>
-            <column name="TAG" type="VARCHAR(255)"/>
-            <column name="LIQUIBASE" type="VARCHAR(20)"/>
-            <column name="CONTEXTS" type="VARCHAR(255)"/>
-            <column name="LABELS" type="VARCHAR(255)"/>
-            <column name="DEPLOYMENT_ID" type="VARCHAR(10)"/>
-        </createTable>
-    </changeSet>
--->
-
+    <include file="delete-all-records.xml" relativeToChangelogFile="true"/>
     <include file="create-newsletters.xml" relativeToChangelogFile="true"/>
     <include file="create-addresses.xml" relativeToChangelogFile="true"/>
 
@@ -47,6 +21,6 @@
     <include file="create-passwords.xml" relativeToChangelogFile="true"/>
     <include file="create-users.xml" relativeToChangelogFile="true"/>
 
-    <include file="delete-all-records.xml" relativeToChangelogFile="true"/>
+
 
 </databaseChangeLog>

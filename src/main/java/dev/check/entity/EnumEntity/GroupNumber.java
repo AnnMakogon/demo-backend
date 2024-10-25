@@ -18,4 +18,13 @@ public enum GroupNumber {
         this.group = group;
     }
 
+    public static GroupNumber fromString(String groupName) {
+        for (GroupNumber group : values()) {
+            if (group.group.equals(groupName)) {
+                return group;
+            }
+        }
+        return null;
+    }
+
 }

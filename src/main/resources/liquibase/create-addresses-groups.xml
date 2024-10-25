@@ -5,6 +5,10 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+    <changeSet id="create-add_gr_seq" author="Ann" runOnChange="true">
+        <createSequence cacheSize="1" cycle="false" sequenceName="add_gr_seq" dataType="bigint" incrementBy="1" maxValue="9223372036854775807" minValue="1"  startValue="1"/>
+    </changeSet>
+
     <changeSet id="create-addresses-groups-table" author="Ann" runOnChange="true">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -16,6 +20,7 @@
                 address_id BIGINT NOT NULL,
                 group_id BIGINT NOT NULL,
                 PRIMARY KEY (address_id, group_id),
+
                 FOREIGN KEY (address_id) REFERENCES addresses(id),
                 FOREIGN KEY (group_id) REFERENCES groups(id)
             );
@@ -66,4 +71,23 @@
             LEFT JOIN groups g ON ag.group_id = g.id
         </createView>-->
     </changeSet>
+
+    <changeSet id="update-addresses-groups-table" author="Ann" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+        <tableExists tableName="addresses_groups"/>
+    </preConditions>
+    <sql>
+        ALTER TABLE addresses_groups DROP CONSTRAINT addresses_groups_pkey;
+
+        ALTER TABLE addresses_groups ADD COLUMN id BIGINT NOT NULL DEFAULT nextval('add_group_seq');
+
+        ALTER TABLE addresses_groups ADD PRIMARY KEY (id);
+        ALTER TABLE addresses_groups ALTER COLUMN group_id TYPE BIGINT;
+        ALTER TABLE addresses_groups DROP CONSTRAINT addresses_groups_group_id_fkey;
+
+        ALTER TABLE addresses_groups ADD FOREIGN KEY (address_id) REFERENCES addresses(id);
+        ALTER TABLE addresses_groups ADD FOREIGN KEY (group_id) REFERENCES groups(id);
+    </sql>
+    </changeSet>
+
 </databaseChangeLog>

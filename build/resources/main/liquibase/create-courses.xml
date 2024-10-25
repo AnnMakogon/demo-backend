@@ -32,6 +32,16 @@
             ADD CONSTRAINT fk_course_address FOREIGN KEY (course_id) REFERENCES courses(id);
         </sql>
     </changeSet>
+
+    <changeSet id="remove-address-course_id" author="Ann" runOnChange="true">
+        <sql>
+            ALTER TABLE addresses
+            DROP CONSTRAINT fk_course_address;
+
+            ALTER TABLE addresses
+            DROP COLUMN course_id;
+        </sql>
+    </changeSet>
         <!--<createTable tableName="courses">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>

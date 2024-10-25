@@ -28,7 +28,7 @@
 
         </sql>
     </changeSet>-->
-    <changeSet id="delete-all-records" author="Ann" runOnChange="true">
+    <changeSet id="delete-all-records3" author="Ann" runOnChange="true">
         <sql>
             TRUNCATE TABLE students RESTART IDENTITY CASCADE;
             TRUNCATE TABLE users RESTART IDENTITY CASCADE;
