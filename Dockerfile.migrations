@@ -1,0 +1,5 @@
+FROM openjdk:17-jdk-slim
+WORKDIR /migrations
+COPY src/main/resources/liquibase /migrations/liquibase
+RUN apt-get update && apt-get install -y liquibase
+ENTRYPOINT ["liquibase", "--changeLogFile=liquibase/changelog.xml", "update"]
