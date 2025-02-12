@@ -50,7 +50,7 @@ public interface NewsletterMapper {
 
     NewsletterEntity newsletterDtoToNewsletter(Newsletter newsletterDto);
 
-    @Mapping(source = "entity.addresses", target = "address")
+    @Mapping(source = "entity.addresses", target = "addresses")
     @Mapping(source = "entity.status", target = "status")
     Newsletter newsletterEntityToNewsletter(NewsletterEntity entity);
 

@@ -86,9 +86,9 @@ public class StudentService {
         UsernamePasswordAuthenticationToken userData = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
         Page<StudentEntity> students;
         if (getRoles(userData)) {
-            students = studentRepository.getStudentsStudent(request.getFilter(), pageable, userData.getName()); //без телефонов остальных
-        } else {
             students = studentRepository.getStudentsAdmin(request.getFilter(), pageable); //полностью со всеми данными
+        } else {
+            students = studentRepository.getStudentsStudent(request.getFilter(), pageable, userData.getName()); //без телефонов остальных
         }
         return mapDtoForPage(students);
     }
@@ -103,8 +103,7 @@ public class StudentService {
                 .map(auth -> Role.valueOf(auth.getAuthority())) // для каждого элемента
                 .collect(Collectors.toList());                  // в лист
 
-        List<Role> allRoles = new ArrayList<>(Arrays.asList(Role.values()));
-        return allRoles.contains(roles);
+        return roles.contains(Role.ADMIN);
     }
 
 }

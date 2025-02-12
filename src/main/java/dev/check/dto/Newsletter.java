@@ -17,7 +17,7 @@ public class Newsletter {
     private OffsetDateTime date;
     private String text = "";
     private String subject = "";
-    private List<Address> address;
+    private List<Address> addresses;
     private Boolean sent = false; // отправлено или нет
     private String status = "";  // дошло / есть ошибка / принято в обработку / не отправлено
 }

@@ -34,6 +34,12 @@ public interface NewsletterRepository extends JpaRepository<NewsletterEntity, Lo
     " ORDER BY n.date ASC LIMIT :size")
     List<NewsletterEntity> getForSentScheduler(@Param("size") int size);
 
+    @Query(nativeQuery = true, value = "SELECT n.*, a.* " +
+            " FROM newsletters n " +
+            " LEFT JOIN addresses a ON n.id = a.newsletter_id " +
+            " WHERE n.id = :id ")
+    NewsletterEntity findByIdWithAddress(@Param("id") Long id);
+
     @Modifying
     @Query(nativeQuery = true, value = "UPDATE newsletters SET status = :status WHERE id = :id")
     void changeStatus(Long id, String status);

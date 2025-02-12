@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2024-10-22T18:58:59+0300",
+    date = "2024-11-05T17:07:46+0300",
     comments = "version: 1.5.5.Final, compiler: IncrementalProcessingEnvironment from gradle-language-java-8.6.jar, environment: Java 1.8.0_382 (Amazon.com Inc.)"
 )
 @Component
@@ -188,6 +188,7 @@ public class NewsletterMapperImpl implements NewsletterMapper {
         newsletterEntity.setDate( newsletterDto.getDate() );
         newsletterEntity.setText( newsletterDto.getText() );
         newsletterEntity.setSubject( newsletterDto.getSubject() );
+        newsletterEntity.setAddresses( addressListToAddressEntityList( newsletterDto.getAddresses() ) );
         newsletterEntity.setSent( newsletterDto.getSent() );
         newsletterEntity.setStatus( stringToStatus( newsletterDto.getStatus() ) );
 
@@ -202,7 +203,7 @@ public class NewsletterMapperImpl implements NewsletterMapper {
 
         Newsletter newsletter = new Newsletter();
 
-        newsletter.setAddress( addressEntitiesToAddresses( entity.getAddresses() ) );
+        newsletter.setAddresses( addressEntitiesToAddresses( entity.getAddresses() ) );
         if ( entity.getStatus() != null ) {
             newsletter.setStatus( entity.getStatus().name() );
         }
@@ -389,5 +390,18 @@ public class NewsletterMapperImpl implements NewsletterMapper {
         CourseEntity courseEntity = new CourseEntity();
 
         return courseEntity;
+    }
+
+    protected List<AddressEntity> addressListToAddressEntityList(List<Address> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<AddressEntity> list1 = new ArrayList<AddressEntity>( list.size() );
+        for ( Address address : list ) {
+            list1.add( addressToAddressEntity( address ) );
+        }
+
+        return list1;
     }
 }

@@ -55,15 +55,15 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Autowired
-    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication().dataSource(dataSource)
-                .passwordEncoder(new BCryptPasswordEncoder())
-                .usersByUsernameQuery(
-                        "select username, p.password as Passwords, enable "
-                                + "from users as u "
-                                + "inner join Passwords as p on u.password_id = p.id "
-                                + "where username=?")
-                .authoritiesByUsernameQuery("select username, role from users where username=?");
-    }
+        @Autowired
+        public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+            auth.jdbcAuthentication().dataSource(dataSource)
+                    .passwordEncoder(new BCryptPasswordEncoder())
+                    .usersByUsernameQuery(
+                            "select username, p.password as Passwords, enable "
+                                    + "from users as u "
+                                    + "inner join Passwords as p on u.password_id = p.id "
+                                    + "where username=?")
+                    .authoritiesByUsernameQuery("select username, role from users where username=?");
+        }
 }

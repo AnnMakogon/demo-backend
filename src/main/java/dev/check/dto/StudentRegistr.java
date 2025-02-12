@@ -16,7 +16,7 @@ public class StudentRegistr {
     private String fio;
     private String group;
     private String phoneNumber;
-    private String passwordId;
+    private String password;
     private String role;
     private boolean enable = false;
     @NotNull

@@ -15,6 +15,7 @@ import dev.check.mapper.NewsletterMapper;
 
 import dev.check.repositories.*;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Setter
 public class NewsletterService {
 
     private final JavaMailSender emailSender;
@@ -106,13 +108,12 @@ public class NewsletterService {
             idList.add(newsletter0.getId());
         });
         return idList;
-
     }
 
     private List<NewsletterEntity> mapToNewsletters(Newsletter newsletter) {
         List<NewsletterEntity> newsletters = new ArrayList<>();
 
-        for (Address address : newsletter.getAddress()) {
+        for (Address address : newsletter.getAddresses()) {
             if ("ADMIN".equalsIgnoreCase(address.getRole()) && (address.getGroups() == null || address.getGroups().isEmpty())) {
                 addAdminNewsletter(newsletters, newsletter);
             } else {
@@ -165,7 +166,7 @@ public class NewsletterService {
         if (newsletter.getId() == null) {
             throw new RuntimeException("id of changing student cannot be null");
         }
-        NewsletterEntity newsletterEntity = newsletterRepository.findById(newsletter.getId()).get();
+        NewsletterEntity newsletterEntity = newsletterRepository.findByIdWithAddress(newsletter.getId());
         NewsletterEntity saveNewsletter = newsletterMapper.newsletterDtoToNewsletter(newsletter);
 
         if (newsletterEntity.getAddresses().isEmpty()) {

@@ -44,13 +44,13 @@ public class SentManager {
             if (!newsletters.isEmpty()) {
                 newsletterService.changeStatus(newsletter.getId(), Status.INPROCESSING);
 
-                if (newsletter.getAddress().isEmpty()) {
+                if (newsletter.getAddresses().isEmpty()) {
                     sentExecutor.schedulerSendMessage(newsletter, defaultAddress);
                 } else {
-                    for (Address address : newsletter.getAddress()) {
+                    for (Address address : newsletter.getAddresses()) {
                         AddressEntity addressEntity = nlMapper.addressToAddressEntity(address);
 
-                        log.info("Size of addresses: " + newsletter.getAddress().size());
+                        log.info("Size of addresses: " + newsletter.getAddresses().size());
                         for (AddressCourseEntity addressCourse : addressEntity.getCourses()) {
                             List<String> emails = newsletterService.getEmailForSent(addressCourse.getCourse().getCourseNumber().getCourse(),
                                     null,//address.getDepartments(), заглушка

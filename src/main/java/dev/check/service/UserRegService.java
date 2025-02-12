@@ -28,7 +28,7 @@ public class UserRegService {
     private final UserRepository userRepository;
 
     @Transactional
-    public StudentRegistr regStudent(StudentRegistr studentRegistr) {
+    public void regStudent(StudentRegistr studentRegistr) {
         if (userRepository.findUserByName(studentRegistr.getFio())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "username already exist");
         }
@@ -38,14 +38,12 @@ public class UserRegService {
                                 new DepartmentEntity(DepartmentName.valueOf(studentRegistr.getDepartmentName())), null);
         UserEntity user = new UserEntity(studentRegistr.getFio(),
                 userMapper.stringToRole(studentRegistr.getRole()),
-                new PasswordEntity(studentRegistr.getPasswordId()),
+                new PasswordEntity(studentRegistr.getPassword()),
                 true, studentRegistr.getEmail(), false);
         user.setStudent(student);
         student.setUser(user);
         userRepository.save(user);
         studentRepository.save(student);
-
-        return studentRegistr;
     }
 
     @Transactional

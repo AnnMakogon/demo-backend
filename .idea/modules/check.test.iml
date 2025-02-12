@@ -27,7 +27,7 @@
     <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-messaging:5.7.6" level="project" />
     <orderEntry type="library" name="Gradle: org.liquibase:liquibase-core:4.4.3" level="project" />
     <orderEntry type="library" name="Gradle: io.projectreactor:reactor-core:3.4.13" level="project" />
-    <orderEntry type="library" name="Gradle: junit:junit:4.13.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter:5.9.0" level="project" />
     <orderEntry type="library" name="Gradle: org.mockito:mockito-core:4.0.0" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-aop:2.7.8" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework.boot:spring-boot-starter-jdbc:2.7.8" level="project" />
@@ -62,7 +62,8 @@
     <orderEntry type="library" name="Gradle: org.springframework:spring-core:5.3.25" level="project" />
     <orderEntry type="library" name="Gradle: javax.xml.bind:jaxb-api:2.3.1" level="project" />
     <orderEntry type="library" name="Gradle: org.reactivestreams:reactive-streams:1.0.4" level="project" />
-    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest-core:2.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-params:5.8.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.jupiter:junit-jupiter-api:5.8.2" level="project" />
     <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.12.22" level="project" />
     <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy-agent:1.12.22" level="project" />
     <orderEntry type="library" name="Gradle: org.aspectj:aspectjweaver:1.9.7" level="project" />
@@ -118,7 +119,9 @@
     <orderEntry type="library" name="Gradle: org.springframework.security:spring-security-crypto:5.7.6" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-jcl:5.3.25" level="project" />
     <orderEntry type="library" name="Gradle: javax.activation:javax.activation-api:1.2.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.hamcrest:hamcrest:2.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Gradle: org.apiguardian:apiguardian-api:1.1.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.junit.platform:junit-platform-commons:1.8.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.opentest4j:opentest4j:1.2.0" level="project" />
     <orderEntry type="library" name="Gradle: jakarta.xml.bind:jakarta.xml.bind-api:2.3.3" level="project" />
     <orderEntry type="library" name="Gradle: org.glassfish.jaxb:txw2:2.3.7" level="project" />
     <orderEntry type="library" name="Gradle: com.sun.istack:istack-commons-runtime:3.0.12" level="project" />
@@ -135,7 +138,9 @@
     <orderEntry type="library" name="Gradle: net.minidev:accessors-smart:2.4.8" level="project" />
     <orderEntry type="library" name="Gradle: org.ow2.asm:asm:9.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.checkerframework:checker-qual:3.5.0" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.jupiter:junit-jupiter-engine:5.8.2" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Gradle: org.objenesis:objenesis:3.2" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Gradle: org.junit.platform:junit-platform-engine:1.8.2" level="project" />
   </component>
   <component name="TestModuleProperties" production-module="check.main" />
 </module>
